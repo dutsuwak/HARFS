@@ -27,7 +27,7 @@ public:
 
 	static string DEBUG;
 	static string JSONS_PATH;
-	static string SHARED_SECRECT;
+	static string SHARED_SECRET;
 	static string PATH;
 	static int PORT;
 	static int DISK_SIZE;

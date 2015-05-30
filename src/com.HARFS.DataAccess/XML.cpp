@@ -21,7 +21,7 @@ XMLReader::~XMLReader() {}
 void XMLReader::loadXMLFile(std::string pData){
 	bool loadOkay = documento.LoadFile(pData.c_str());
 	/*if (loadOkay == false){
-		std::cout << "*XML* Failed to load file. File not found" << std::endl;
+	*	std::cout << "*XML* Failed to load file. File not found" << std::endl;
 	}*/
 }
 
