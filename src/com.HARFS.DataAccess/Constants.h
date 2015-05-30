@@ -1,7 +1,7 @@
 /*
- * Constants.h
+ * DiskNodeConstants.h
  *
- *  Created on: May 29, 2015
+ *  Created on: May 30, 2015
  *      Author: abrahamon
  */
 
@@ -10,18 +10,28 @@
 
 #include <string>
 #include <stdlib.h>
+#include "XML.h"
+#include "lib.tinyxml/tinyxml.h"
 
 using namespace std;
 
 class Constants {
+private:
+	Constants();
+	virtual ~Constants();
+
 public:
 	static Constants* _Constants;
+
 	Constants* getInstance();
 
 	static string DEBUG;
 	static string JSONS_PATH;
-private:
-	Constants();
+	static string SHARED_SECRECT;
+	static string PATH;
+	static int PORT;
+	static int DISK_SIZE;
+
 };
 
 #endif /* COM_HARFS_DATAACCESS_CONSTANTS_H_ */

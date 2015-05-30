@@ -1,0 +1,8 @@
+<root>
+	<DEBUG value = "true"/>
+	<JSONS_PATH value = "/home/abrahamon/Documents/Eclipse Projects/HARFS/src/" />
+	<SHARED_SECRECT value = ""/>;
+	<PATH value = ""/>;
+	<PORT value = ""/>;
+	<DISK_SIZE value = ""/>;
+</root>

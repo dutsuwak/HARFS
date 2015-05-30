@@ -17,9 +17,9 @@
 #include <sstream>
 #include <iterator>
 #include <time.h>
-#include "../com.HARFS.DataAccess/Constants.h"
 #include <boost/lexical_cast.hpp>
 #include "../com.HARFS.DataStructures/LinkedList.h"
+#include "Constants.h"
 
 using boost::lexical_cast;
 using namespace std;
