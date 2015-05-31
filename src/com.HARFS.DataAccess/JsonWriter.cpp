@@ -3,7 +3,7 @@
 using namespace std;
 
 JsonWriter::JsonWriter() {
-	Path_to_Json = Constants::JSONS_PATH;
+	Path_to_Json = ControllerConstants::JSONS_PATH;
 }
 
 void JsonWriter::resetVillageArmy(std::string pPueblo){

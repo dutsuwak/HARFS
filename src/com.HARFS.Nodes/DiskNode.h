@@ -8,11 +8,18 @@
 #ifndef COM_HARFS_DATASTRUCTURES_COM_HARFS_RESOURCES_DISKNODE_H_
 #define COM_HARFS_DATASTRUCTURES_COM_HARFS_RESOURCES_DISKNODE_H_
 
-#include "../com.HARFS.DataAccess/Constants.h"
+#include "../com.HARFS.DataAccess/DiskConstants.h";
 #include "../com.HARFS.DataStructures/LinkedList.h";
+
+using namespace std;
+
 class DiskNode {
 
 private:
+	string _SharedSecret;
+	string _Path;
+	int _DiskSize;
+	int _Port;
 
 public:
 	DiskNode();

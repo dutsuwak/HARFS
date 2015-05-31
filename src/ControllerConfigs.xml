@@ -3,6 +3,6 @@
 	<JSONS_PATH value = "/home/abrahamon/Documents/Eclipse Projects/HARFS/src/com.HARFS.Jsons/" />
 	<SHARED_SECRET value = "a" />
 	<PATH value = "a" />
-	<PORT value = "a" />
+	<PORT value = "8084" />
 	<DISK_SIZE value = "a" />
 </root>

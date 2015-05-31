@@ -9,6 +9,8 @@
 #define COM_HARFS_DATAACCESS_LINKEDLIST_H_
 
 #include "../com.HARFS.DataStructures/LinkedNode.h"
+#include <iostream>
+
 using namespace std;
 
 /**

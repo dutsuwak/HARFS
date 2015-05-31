@@ -5,21 +5,21 @@
  *      Author: abrahamon
  */
 
-#include "Constants.h"
+#include "ControllerConstants.h"
 
-Constants* Constants::_Constants;
-string Constants::JSONS_PATH;
-string Constants::DEBUG;
-string Constants::PATH;
-string Constants::SHARED_SECRET;
-int Constants::DISK_SIZE = 0;
-int Constants::PORT = 0;
+ControllerConstants* ControllerConstants::_Constants;
+string ControllerConstants::JSONS_PATH;
+string ControllerConstants::DEBUG;
+string ControllerConstants::PATH;
+string ControllerConstants::SHARED_SECRET;
+int ControllerConstants::DISK_SIZE = 0;
+int ControllerConstants::PORT = 0;
 
-Constants::Constants() {
+ControllerConstants::ControllerConstants() {
 	//XML Reader
 	srand(time(0));
 	XMLReader* reader = new XMLReader();
-	reader->loadXMLFile("src/configs.xml");
+	reader->loadXMLFile("src/ControllerConfigs.xml");
 
 	//General Constants
 	//atoi(reader->getParameter("INTEGER"));
@@ -32,13 +32,13 @@ Constants::Constants() {
 
 }
 
-Constants::~Constants() {
+ControllerConstants::~ControllerConstants() {
 	// TODO Auto-generated destructor stub
 }
 
-Constants* Constants::getInstance(){
+ControllerConstants* ControllerConstants::getInstance(){
 	if(_Constants== 0){
-		_Constants= new Constants();
+		_Constants= new ControllerConstants();
 	}
 	return _Constants;
 }

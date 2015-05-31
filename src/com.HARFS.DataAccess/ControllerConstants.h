@@ -5,8 +5,8 @@
  *      Author: abrahamon
  */
 
-#ifndef COM_HARFS_DATAACCESS_CONSTANTS_H_
-#define COM_HARFS_DATAACCESS_CONSTANTS_H_
+#ifndef COM_HARFS_DATAACCESS_CONTROLLERCONSTANTS_H_
+#define COM_HARFS_DATAACCESS_CONTROLLERCONSTANTS_H_
 
 #include <string>
 #include <stdlib.h>
@@ -15,15 +15,15 @@
 
 using namespace std;
 
-class Constants {
+class ControllerConstants {
 private:
-	Constants();
-	virtual ~Constants();
+	ControllerConstants();
+	virtual ~ControllerConstants();
 
 public:
-	static Constants* _Constants;
+	static ControllerConstants* _Constants;
 
-	Constants* getInstance();
+	ControllerConstants* getInstance();
 
 	static string DEBUG;
 	static string JSONS_PATH;
@@ -34,4 +34,4 @@ public:
 
 };
 
-#endif /* COM_HARFS_DATAACCESS_CONSTANTS_H_ */
+#endif /* COM_HARFS_DATAACCESS_CONTROLLERCONSTANTS_H_ */

@@ -8,11 +8,11 @@
 #include "ControllerNode.h"
 
 ControllerNode::ControllerNode() {
-	// TODO Auto-generated constructor stub
+	_Server = new Server(ControllerConstants::PORT);
+	_SharedSecret = ControllerConstants::SHARED_SECRET;
+	_Port = ControllerConstants::PORT;
 
 }
 
-ControllerNode::~ControllerNode() {
-	// TODO Auto-generated destructor stub
-}
+ControllerNode::~ControllerNode() {}
 

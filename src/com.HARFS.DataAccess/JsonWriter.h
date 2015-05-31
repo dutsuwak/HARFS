@@ -19,7 +19,7 @@
 #include <time.h>
 #include <boost/lexical_cast.hpp>
 #include "../com.HARFS.DataStructures/LinkedList.h"
-#include "Constants.h"
+#include "ControllerConstants.h"
 
 using boost::lexical_cast;
 using namespace std;
