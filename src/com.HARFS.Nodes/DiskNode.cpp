@@ -12,9 +12,10 @@ DiskNode::DiskNode() {
 	this->_Port = DiskConstants::PORT;
 	this->_Path = DiskConstants::PATH;
 	this->_SharedSecret = DiskConstants::SHARED_SECRET;
+	cout<<"CREANDO disknode en: "<<_Port<<endl;
+	this->_Server = new Server(_Port);
 }
 
-DiskNode::~DiskNode() {
-	// TODO Auto-generated destructor stub
-}
+DiskNode::~DiskNode() {}
+
 

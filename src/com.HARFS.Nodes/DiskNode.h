@@ -10,12 +10,14 @@
 
 #include "../com.HARFS.DataAccess/DiskConstants.h";
 #include "../com.HARFS.DataStructures/LinkedList.h";
+#include "../com.HARFS.NetworkAccess/Server.h"
 
 using namespace std;
 
 class DiskNode {
 
 private:
+	Server* _Server;
 	string _SharedSecret;
 	string _Path;
 	int _DiskSize;

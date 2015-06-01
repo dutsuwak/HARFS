@@ -8,14 +8,20 @@
 #ifndef NETWORKACCESS_SERVER_H_
 #define NETWORKACCESS_SERVER_H_
 
+#include <pthread.h>
+#include <iostream>
+
+using namespace std;
+
 class Server {
 private:
-	int _Port;
+	static int _Port;
 public:
 	Server(int pPort);
 	virtual ~Server();
+	static void* threadListen(void* pData);
 	void conect();
-	void error(const char *msg);
+	static void error(const char *msg);
 };
 
 #endif /* NETWORKACCESS_SERVER_H_ */

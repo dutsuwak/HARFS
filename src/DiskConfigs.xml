@@ -1,7 +1,7 @@
 <root>
 	<DEBUG value = "true" />
 	<SHARED_SECRET value = "a" />
-	<PORT value = "8084" />
+	<PORT value = "8088" />
 	<PATH value = "vacio" />
 	<DISK_SIZE value = "100" />
 </root>
