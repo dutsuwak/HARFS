@@ -8,9 +8,10 @@
 #include "../com.HARFS.NetworkAccess/Server.h"
 
 int Server::_ListeningPort = 0;
-LinkedList<string>* Server::_MessagesList;
+LinkedList<string>* Server::_MessagesList =0;
+pthread_mutex_t Server::mutex = PTHREAD_MUTEX_INITIALIZER;
 
-Server::Server(int pPort) {
+Server::Server( int pPort) {
 	_MessagesList = new LinkedList<string>();
 	_ListeningPort = pPort;
 	pthread_t hilo;
@@ -41,7 +42,7 @@ void* Server::threadListen(void* pData){
 	 if (newsockfd < 0)
 		 error("ERROR on accept");
 	 while(true){
-		sleep(0.5);
+		sleep(0.2);
 
 		bzero(buffer,256);
 		n = read(newsockfd,buffer,255);
@@ -49,8 +50,12 @@ void* Server::threadListen(void* pData){
 		 error("ERROR reading from socket");
 		string str = string(buffer);
 		if(str.length()>2)
+
+			pthread_mutex_lock(&mutex);
 			_MessagesList->insertTail(str);
-			cout<<"Mensaje recibido::: "<<str<<endl;
+			pthread_mutex_unlock(&mutex);
+
+	//		cout<<"Mensaje recibido::: "<<str<<endl;
 
 		if( str.compare("CLOSE") == 2 && str.length() == 7){
 			break;
@@ -74,7 +79,13 @@ void Server::error(const char *msg)
 }
 
 string Server::getFirstMessage(){
+	pthread_mutex_lock(&mutex);
+	if(_MessagesList->getLength()==0){
+		pthread_mutex_unlock(&mutex);
+		return "-1";
+	}
 	string ans = _MessagesList->getHead()->getData();
 	_MessagesList->deleteData(ans);
+	pthread_mutex_unlock(&mutex);
 	return ans;
 }

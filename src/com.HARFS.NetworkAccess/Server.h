@@ -21,15 +21,18 @@
 
 using namespace std;
 
-class Server {
+class Server{
 private:
 	static int _ListeningPort;
 	static LinkedList<string>* _MessagesList;
+	static pthread_mutex_t mutex;
+
 public:
 	Server(int pPort);
 	static void* threadListen(void* pData);
 	static void error(const char *msg);
 	string getFirstMessage();
+
 };
 
 #endif /* NETWORKACCESS_SERVER_H_ */

@@ -13,7 +13,7 @@ DiskNode::DiskNode() {
 	this->_Path = DiskConstants::PATH;
 	this->_SharedSecret = DiskConstants::SHARED_SECRET;
 	cout<<"CREANDO disknode en: "<<_Port<<endl;
-	this->_Server = new Server(_Port);
+	//this->_Server = new Server(_Port);
 }
 
 DiskNode::~DiskNode() {}
