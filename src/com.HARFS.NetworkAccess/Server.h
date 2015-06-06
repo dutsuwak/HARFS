@@ -17,16 +17,19 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "../com.HARFS.DataStructures/LinkedList.h"
 
 using namespace std;
 
 class Server {
 private:
-	static int _Port;
+	static int _ListeningPort;
+	static LinkedList<string>* _MessagesList;
 public:
 	Server(int pPort);
 	static void* threadListen(void* pData);
 	static void error(const char *msg);
+	string getFirstMessage();
 };
 
 #endif /* NETWORKACCESS_SERVER_H_ */

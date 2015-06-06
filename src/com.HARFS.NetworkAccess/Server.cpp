@@ -7,16 +7,16 @@
 
 #include "../com.HARFS.NetworkAccess/Server.h"
 
-int Server::_Port = 0;
+int Server::_ListeningPort = 0;
+LinkedList<string>* Server::_MessagesList;
 
 Server::Server(int pPort) {
-	_Port = pPort;
+	_MessagesList = new LinkedList<string>();
+	_ListeningPort = pPort;
 	pthread_t hilo;
 	pthread_create(&hilo,0,Server::threadListen,(void*)this);
 }
 
-Server::~Server() {
-}
 
 /* A simple server in the internet domain using TCP
    El puerto es una variable de clase, se pasa como argumento */
@@ -32,7 +32,7 @@ void* Server::threadListen(void* pData){
 	 bzero((char *) &serv_addr, sizeof(serv_addr));
 	 serv_addr.sin_family = AF_INET;
 	 serv_addr.sin_addr.s_addr = INADDR_ANY;
-	 serv_addr.sin_port = htons(_Port);
+	 serv_addr.sin_port = htons(_ListeningPort);
 	 if (bind(sockfd, (struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0){
 			  error("ERROR on binding");}
 	 listen(sockfd,5);
@@ -49,6 +49,7 @@ void* Server::threadListen(void* pData){
 		 error("ERROR reading from socket");
 		string str = string(buffer);
 		if(str.length()>2)
+			_MessagesList->insertTail(str);
 			cout<<"Mensaje recibido::: "<<str<<endl;
 
 		if( str.compare("CLOSE") == 2 && str.length() == 7){
@@ -70,4 +71,10 @@ void Server::error(const char *msg)
 {
     perror(msg);
     exit(1);
+}
+
+string Server::getFirstMessage(){
+	string ans = _MessagesList->getHead()->getData();
+	_MessagesList->deleteData(ans);
+	return ans;
 }
