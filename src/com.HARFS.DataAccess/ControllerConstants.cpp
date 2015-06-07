@@ -8,12 +8,10 @@
 #include "ControllerConstants.h"
 
 ControllerConstants* ControllerConstants::_Constants;
-string ControllerConstants::JSONS_PATH;
 string ControllerConstants::DEBUG;
-string ControllerConstants::PATH;
 string ControllerConstants::SHARED_SECRET;
-int ControllerConstants::DISK_SIZE = 0;
-int ControllerConstants::PORT = 0;
+int ControllerConstants::LISTENINGPORT = 0;
+LinkedList<string>* ControllerConstants::DISK_NODES;
 
 ControllerConstants::ControllerConstants() {
 	//XML Reader
@@ -24,11 +22,16 @@ ControllerConstants::ControllerConstants() {
 	//General Constants
 	//atoi(reader->getParameter("INTEGER"));
 	DEBUG= reader->getParameter("DEBUG");
-	JSONS_PATH = reader->getParameter("JSONS_PATH");
-	PATH = reader->getParameter("PATH");
 	SHARED_SECRET = reader->getParameter("SHARED_SECRET");
-	DISK_SIZE = atoi(reader->getParameter("DISK_SIZE"));
-	PORT = atoi(reader->getParameter("PORT"));
+	LISTENINGPORT = atoi(reader->getParameter("LISTENINGPORT"));
+
+	DISK_NODES = new LinkedList<string>();
+
+	string TmpIPS = reader->getParameter("DISK_NODES");
+	char sep = '#';
+	for(size_t p=0, q=0; p!=TmpIPS.npos; p=q){
+	  DISK_NODES->insertTail(TmpIPS.substr(p+(p!=0), (q=TmpIPS.find(sep, p+1))-p-(p!=0)));
+	}
 
 }
 

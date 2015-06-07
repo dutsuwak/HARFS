@@ -9,9 +9,11 @@
 #define COM_HARFS_DATAACCESS_CONTROLLERCONSTANTS_H_
 
 #include <string>
+#include <string>
 #include <stdlib.h>
 #include "XML.h"
 #include "lib.tinyxml/tinyxml.h"
+#include "../com.HARFS.DataStructures/LinkedList.h"
 
 using namespace std;
 
@@ -26,11 +28,9 @@ public:
 	ControllerConstants* getInstance();
 
 	static string DEBUG;
-	static string JSONS_PATH;
 	static string SHARED_SECRET;
-	static string PATH;
-	static int PORT;
-	static int DISK_SIZE;
+	static int LISTENINGPORT;
+	static LinkedList<string>* DISK_NODES;
 
 };
 

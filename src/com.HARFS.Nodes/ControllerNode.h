@@ -13,6 +13,7 @@
 #include "../com.HARFS.DataAccess/ControllerConstants.h"
 #include "../com.HARFS.DataStructures/LinkedList.h"
 #include "../com.HARFS.NetworkAccess/Server.h"
+#include "../com.HARFS.NetworkAccess/Client.h"
 
 using namespace std;
 
@@ -24,6 +25,7 @@ private:
 	LinkedList<string>* _DiskNodes;
 	static pthread_mutex_t mutex;
 	static Server* _Server;
+	static Client* _Client;
 
 public:
 	ControllerNode();

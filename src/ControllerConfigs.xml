@@ -1,8 +1,6 @@
 <root>
 	<DEBUG value = "true" />
-	<JSONS_PATH value = "/home/abrahamon/Documents/Eclipse Projects/HARFS/src/com.HARFS.Jsons/" />
 	<SHARED_SECRET value = "a" />
-	<PATH value = "a" />
-	<PORT value = "8081" />
-	<DISK_SIZE value = "a" />
+	<LISTENINGPORT value = "8091" />
+	<DISK_NODES value = "10.18.10.106:8081"/>
 </root>
