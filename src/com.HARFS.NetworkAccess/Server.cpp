@@ -45,6 +45,7 @@ void* Server::threadListen(void* pData){
 		sleep(0.2);
 
 		bzero(buffer,256);
+		cout<<"=============="<<endl;
 		n = read(newsockfd,buffer,255);
 		if (n < 0)
 		 error("ERROR reading from socket");
@@ -55,13 +56,13 @@ void* Server::threadListen(void* pData){
 			_MessagesList->insertTail(str);
 			pthread_mutex_unlock(&mutex);
 
-	//		cout<<"Mensaje recibido::: "<<str<<endl;
+			cout<<"Mensaje recibido::: "<<str<<endl;
 
-		if( str.compare("CLOSE") == 2 && str.length() == 7){
+		/*if( str.compare("CLOSE") == 2 && str.length() == 7){
 			break;
-		}
-//		printf("Here is the message: %s\n",buffer);
-		n = write(newsockfd,"Recibi tu mensaje\n ",18);
+		}*/
+	//	printf("Here is the message: %s\n",buffer);
+	//	n = write(newsockfd,"Recibi tu mensaje\n ",18);
 	//	if (n < 0)
 	//	 error("ERROR writing to socket");
 
