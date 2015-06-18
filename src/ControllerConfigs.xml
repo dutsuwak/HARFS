@@ -1,6 +1,6 @@
 <root>
 	<DEBUG value = "true" />
 	<SHARED_SECRET value = "a" />
-	<LISTENINGPORT value = "8091" />
+	<LISTENINGPORT value = "9092" />
 	<DISK_NODES value = "10.18.10.106:8081"/>
 </root>

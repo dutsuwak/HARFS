@@ -21,7 +21,7 @@ ControllerNode::ControllerNode() {
 	pthread_t hiloCliente;
 	pthread_create(&hiloCliente,0,ControllerNode::getMessageFromSocket,(void*)this);
 
-	string TmpIPS = ControllerConstants::DISK_NODES->getHead()->getData();
+	/*string TmpIPS = ControllerConstants::DISK_NODES->getHead()->getData();
 	char sep = ':';
 	string ans[2];
 	int i =0;
@@ -33,7 +33,7 @@ ControllerNode::ControllerNode() {
 	char* pIP = ans[0].c_str();
 	_Client = new Client(pIP,pPort);
 	if(ControllerConstants::DEBUG=="true")
-			cout<<"Envia a: "<<pIP<<":"<<pPort<<endl;
+			cout<<"Envia a: "<<pIP<<":"<<pPort<<endl;*/
 }
 
 void* ControllerNode::getMessageFromSocket(void* pData) {
