@@ -1,5 +1,6 @@
 #ifndef SOCKETSERVER_H
 #define SOCKETSERVER_H
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
@@ -21,10 +22,11 @@ struct dataSocket{
 class SocketServer
 {
 public:
-    SocketServer();
+    SocketServer(int pPort);
     void run();
     void setMensaje(const char *msn);
 private:
+    int _Port;
     int descriptor;
     sockaddr_in info;
     bool crear_Socket();
