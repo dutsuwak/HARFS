@@ -1,7 +1,9 @@
 #include "socketserver.h"
 
-SocketServer::SocketServer()
+
+SocketServer::SocketServer(int pPort)
 {
+	this->_Port = pPort;
 }
 
 
@@ -12,7 +14,7 @@ bool SocketServer::crear_Socket()
         return false;
     info.sin_family = AF_INET;
     info.sin_addr.s_addr = INADDR_ANY;
-    info.sin_port = htons(8989);
+    info.sin_port = htons(_Port);
     memset(&info.sin_zero,0,sizeof(info.sin_zero));
     return true;
 }
@@ -35,7 +37,7 @@ void SocketServer::run()
         throw string("Error al  ligar kernel");
 
     while (true) {
-        cout << "Esperando nuevo cliente"<<endl;
+       // cout << "Esperando nuevo cliente, por el puerto: "<<_Port<<endl;
         dataSocket data;
         socklen_t tam = sizeof(data.info);
         data.descriptor = accept(descriptor,(sockaddr*)&data.info,&tam);
@@ -59,8 +61,9 @@ void * SocketServer::controladorCliente(void *obj)
     dataSocket *data = (dataSocket*)obj;
     while (true) {
         string mensaje;
+        char buffer[10] = {0};
         while (1) {
-            char buffer[10] = {0};
+        	bzero(buffer,10);
             int bytes = recv(data->descriptor,buffer,10,0);
             mensaje.append(buffer,bytes);
             if(bytes < 10)

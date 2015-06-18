@@ -7,6 +7,7 @@
 
 #include "ControllerNode.h"
 
+SocketServer* ControllerNode::_ServerSocket;
 Server* ControllerNode::_Server;
 pthread_mutex_t ControllerNode::mutex = PTHREAD_MUTEX_INITIALIZER;
 Client* ControllerNode::_Client;
@@ -17,7 +18,9 @@ ControllerNode::ControllerNode() {
 	_DiskNodes = new LinkedList<string>();
 	if(ControllerConstants::DEBUG=="true")
 		cout<<"CREANDO controller node, escucha en: "<<_Port<<endl;
-	_Server = new Server(_Port);
+	//_Server = new Server(_Port);
+	_ServerSocket = new SocketServer(_Port);
+	_ServerSocket->run();
 	pthread_t hiloCliente;
 	pthread_create(&hiloCliente,0,ControllerNode::getMessageFromSocket,(void*)this);
 
