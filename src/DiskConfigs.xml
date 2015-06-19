@@ -1,5 +1,5 @@
 <root>
-	<DEBUG value = "true" />
+	<DEBUG value = "false" />
 	<SHARED_SECRET value = "a" />
 	<PORT value = "8088" />
 	<PATH value = "vacio" />

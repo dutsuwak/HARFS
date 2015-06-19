@@ -11,13 +11,19 @@
 #include <unistd.h>
 #include <string>
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 class StorageBlock{
 
 public:
-	StorageBlock(string pName, int pType, int pRaid);
-
+	StorageBlock(string pName, string pType, string pRaid, string UID);
+	void getInfo();
+private:
+	string storageName;
+	string storageType;
+	string RAIDType;
+	string UID;
 
 };
 

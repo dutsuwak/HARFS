@@ -10,17 +10,36 @@
 HARFS_Disk::HARFS_Disk(){
 
 }
-
+/**
+ * createStorageBlock lee un texto con la informacion de un nuevo
+ * storageblock y luego lo crea
+ * */
 void HARFS_Disk::createStorageBlock(string pData){
 	string storageName;
-	int storageType;
-	int RAIDType;
+	string storageType;
+	string RAIDType;
+	int cont = 0;
 
+	for(int i = 0; i < pData.length(); i++ ){
+		if(pData[i] == '#'){cont++;i++;}
+		if(cont == 0){storageName += pData[i];}
+		if(cont == 1){storageType += pData[i];}
+		if(cont == 2){RAIDType += pData[i];}
+	}
+	string UIDText = storageName + boost::lexical_cast<std::string>(storageType) + boost::lexical_cast<std::string>(RAIDType);
+	string UIDStorageBlock = HARFS_Disk::createUID(UIDText);
 
-
+	StorageBlock * storageBlock = new StorageBlock(storageName, storageType, RAIDType, UIDStorageBlock);
+	listStorageBlocks->insertTail(storageBlock);
 }
 
 void HARFS_Disk::listStorageBlock() {
+	StorageBlock *tmp;
+	tmp = listStorageBlocks->getHead()->getData();
+	for (int i = 0; i < listStorageBlocks->getLength(); i++){
+		tmp->getInfo();
+		tmp = listStorageBlocks->getHead()->getNext()->getData();
+	}
 }
 
 void HARFS_Disk::deleteStorageBlock() {
@@ -66,13 +85,10 @@ string HARFS_Disk::createUID(string pData) {
 
 	}
 	for (int i = 0; i < (16); i++){
-		//cout<<pData[i] << ""<<pData[pData.length()-(i+1)]<<endl;
-		//cout<<UID<<endl;
 		UID += boost::lexical_cast<std::string>(pData[i])+boost::lexical_cast<std::string>(pData[pData.length()-(i+1)]);
 
 	}
-	cout<<pData<<endl;
-	cout<<UID<<endl;
+
 
 	return UID;
 }

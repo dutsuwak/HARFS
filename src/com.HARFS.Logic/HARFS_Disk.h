@@ -11,6 +11,9 @@
 #include <unistd.h>
 #include <string>
 #include <iostream>
+#include "../com.HARFS.DataStructures/LinkedList.h"
+#include "../com.HARFS.DataAccess/DiskConstants.h"
+#include "../com.HARFS.MemoryManager/StorageBlock.h"
 using namespace std;
 class HARFS_Disk{
 
@@ -28,7 +31,7 @@ public:
 	void linkUserToStorageBlock();
 	string createUID(string pData);
 private:
-
+	LinkedList <StorageBlock*> *listStorageBlocks = new LinkedList <StorageBlock*>();
 
 
 };
