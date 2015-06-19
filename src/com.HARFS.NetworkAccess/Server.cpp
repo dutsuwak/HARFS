@@ -26,9 +26,8 @@ Server::Server( int pPort) {
 void* Server::threadListen(void* pData){
 	int sockfd, newsockfd;
 	 socklen_t clilen;
-	 char buffer[256];
+	 //char buffer[256];int n;
 	 struct sockaddr_in serv_addr, cli_addr;
-	 int n;
 	 sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	 if (sockfd < 0)
 		error("ERROR opening socket");
@@ -52,8 +51,8 @@ void* Server::threadListen(void* pData){
 	pthread_exit(NULL);
 }
 
-void* Server::receiveNewClient(void* newsockfd){
-
+void* Server::receiveNewClient(void* pNewsockfd){
+	int newsockfd = pNewsockfd;
 	if(ControllerConstants::DEBUG == "true")
 		cout<<"Server.receiveNewClient()		 Nuevo cliente se ha conectado\n";
 	int n;
@@ -78,7 +77,7 @@ void* Server::receiveNewClient(void* newsockfd){
 
 
 	if(opc == true){//recibir los nuevos datos
-		write(newsockfd,"Ingrese su nombre de usuario: \n",33);
+		write(newsockfd,"Ingrese su nombre de usuario: \n",32);
 		read(newsockfd,userName,sizeof(userName)-1);
 		write(newsockfd,"Ingrese su contraseña: \n",sizeof("Ingrese su contraseña: \n"));
 		read(newsockfd,password,sizeof(password)-1);
@@ -93,7 +92,7 @@ void* Server::receiveNewClient(void* newsockfd){
 		pthread_exit(NULL);
 	}else{//validar las credenciales
 
-		write(newsockfd,"Ingrese su nombre de usuario: \n",33);
+		write(newsockfd,"Ingrese su nombre de usuario: \n",32);
 		read(newsockfd,userName,128);
 		write(newsockfd,"Ingrese su contraseña: \n",25);
 		read(newsockfd,password,128);
@@ -114,7 +113,8 @@ void* Server::receiveNewClient(void* newsockfd){
 		}
 		if(ControllerConstants::DEBUG =="true")
 			cout<<"Login con exito de: "<<userName<<endl;
-		write(newsockfd,"Credenciales correctas \n",26);
+		write(newsockfd,"Credenciales correctas \n",25);
+		write(newsockfd,"--HELP para visualizar los comandos \n",38);
 		//cout<<"usuario: "<<userName<<endl;
 		//cout<<"pass: "<<password<<endl;
 	}
@@ -126,20 +126,63 @@ void* Server::receiveNewClient(void* newsockfd){
 			error("ERROR reading from socket");
 		string str = string(buffer);
 
-		if(str.length()>2 && ControllerConstants::DEBUG=="true")
-			cout<<"Mensaje recibido::: "<<str<<endl;
 		if( str.compare("CLOSE") == 2){
 			break;
 		}
-		pthread_mutex_lock(&mutex);
-		_MessagesList->insertTail(str);
-		pthread_mutex_unlock(&mutex);
+		if(str.compare("--HELP")==2){
+			write(newsockfd,"------------------AYUDA------------- \n",40);
+			write(newsockfd,"1. CSB + nombre + Tipo de Organizacion(LinkedList) + Tipo de Raid(NoRaid,Raid) \n",81);
+			write(newsockfd,"2. LSB  \n",10);
+			write(newsockfd,"3. BST + UID \n",15);
+			write(newsockfd,"4. DESB + Name:Type:Size + … + NameN:TypeN:SizeN \n",52);
+			write(newsockfd,"5. AR  \n",9);
+			write(newsockfd,"6. BR  \n",9);
+			write(newsockfd,"7. B + Clave De Busqueda + Columna \n",37);
+			write(newsockfd,"8. OR + Desplazamiento  \n",26);
+			write(newsockfd,"9. CLOSE  \n",12);
+		}
+		else if(str.length()>2 ){
+			if(formatoCorrecto(str)){
+				write(newsockfd,"Mensaje enviado correctamente \n",32);
+				pthread_mutex_lock(&mutex);
+				_MessagesList->insertTail(str);
+				pthread_mutex_unlock(&mutex);
+			}else{
+				write(newsockfd,"Comando desconocido \n",21);
+			}
+		}
+
 	}
 	cout<<"Server.receiveNewClient() 		Sesion del cliente terminada \n";
 	close(newsockfd);
 	pthread_exit(NULL);
 }
 
+bool Server::formatoCorrecto(string pCommand){
+	bool ans = false;
+
+	string str = pCommand;
+	char delimiter = ' ';
+	LinkedList<string>* internal = new LinkedList<string>();
+	stringstream ss(str); // Turn the string into a stream.
+	string tok;
+	while(getline(ss, tok, delimiter)) {
+		//internal.push_back(tok);
+		internal->insertTail(tok);
+	}
+	Node<string>* tmp = internal->getHead();
+
+	cout<<"comando: "<<pCommand<<endl;
+	cout<<"Largo del comando: "<<internal->getLength()<<endl;
+	cout<<"head dato: "<<tmp->getData()<<endl;
+	if(internal->getLength() == 4 && tmp->getData()=="CSB"){
+		tmp = tmp->getNext()->getNext();
+		if(tmp->getData()=="LinkedList" && (tmp->getNext()->getData()=="NoRaid"||tmp->getNext()->getData()=="Raid"))
+		ans = true;
+	}
+
+	return ans;
+}
 void Server::error(const char *msg)
 {
     perror(msg);

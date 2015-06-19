@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sstream>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "../com.HARFS.DataStructures/LinkedList.h"
@@ -35,6 +36,7 @@ public:
 	static void* receiveNewClient(void* newsockfd);
 	static void error(const char *msg);
 	string getFirstMessage();
+	static bool formatoCorrecto(string pComando);
 
 };
 

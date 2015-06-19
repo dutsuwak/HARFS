@@ -50,8 +50,8 @@ void* DiskServer::threadListen(void* pData){
 	pthread_exit(NULL);
 }
 
-void* DiskServer::receiveNewClient(void* newsockfd){
-
+void* DiskServer::receiveNewClient(void* pNewsockfd){
+	int newsockfd = pNewsockfd;
 	if(ControllerConstants::DEBUG == "true")
 		cout<<"Server.receiveNewClient()		 Nuevo cliente se ha conectado\n";
 	int n;
