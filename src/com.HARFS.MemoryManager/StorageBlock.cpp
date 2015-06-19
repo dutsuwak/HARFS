@@ -27,4 +27,6 @@ void StorageBlock::getInfo(){
 
 }
 
-
+string StorageBlock::getUID() {
+	return UID;
+}

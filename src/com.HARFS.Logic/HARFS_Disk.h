@@ -21,7 +21,7 @@ public:
 	HARFS_Disk();
 	void createStorageBlock(string pData);
 	void listStorageBlock();
-	void deleteStorageBlock();
+	void deleteStorageBlock(string UID);
 	void defineStorageBlock();
 	void saveRecord();
 	void deleteRecord();

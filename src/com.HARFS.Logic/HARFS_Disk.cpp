@@ -6,6 +6,7 @@
  */
 #include "HARFS_Disk.h"
 #include <boost/lexical_cast.hpp>
+#include "../com.HARFS.DataStructures/LinkedNode.h"
 
 HARFS_Disk::HARFS_Disk(){
 
@@ -30,22 +31,33 @@ void HARFS_Disk::createStorageBlock(string pData){
 	string UIDStorageBlock = HARFS_Disk::createUID(UIDText);
 
 	StorageBlock * storageBlock = new StorageBlock(storageName, storageType, RAIDType, UIDStorageBlock);
+
 	listStorageBlocks->insertTail(storageBlock);
 }
 
 void HARFS_Disk::listStorageBlock() {
-	StorageBlock *tmp;
-	tmp = listStorageBlocks->getHead()->getData();
+	Node<StorageBlock*>* tmp;
+	tmp = listStorageBlocks->getHead();
 	for (int i = 0; i < listStorageBlocks->getLength(); i++){
-		tmp->getInfo();
-		tmp = listStorageBlocks->getHead()->getNext()->getData();
+		tmp->getData()->getInfo();
+		tmp = tmp->getNext();
 	}
 }
 
-void HARFS_Disk::deleteStorageBlock() {
+void HARFS_Disk::deleteStorageBlock(string pUID) {
+	StorageBlock *tmp;
+	tmp = listStorageBlocks->getHead()->getData();
+	for (int i = 0; i < listStorageBlocks->getLength(); i++){
+		if (tmp->getUID() == pUID){
+			listStorageBlocks->deleteData(tmp);
+		}
+		tmp = listStorageBlocks->getHead()->getNext()->getData();
+	}
+
 }
 
-void HARFS_Disk::defineStorageBlock() {
+void HARFS_Disk::defineStorageBlock(string pUID) {
+
 }
 
 void HARFS_Disk::saveRecord() {

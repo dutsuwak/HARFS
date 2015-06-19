@@ -19,6 +19,7 @@ class StorageBlock{
 public:
 	StorageBlock(string pName, string pType, string pRaid, string UID);
 	void getInfo();
+	string getUID();
 private:
 	string storageName;
 	string storageType;

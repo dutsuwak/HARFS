@@ -7,7 +7,7 @@
 
 #include "ControllerNode.h"
 
-SocketServer* ControllerNode::_ServerSocket;
+
 Server* ControllerNode::_Server;
 pthread_mutex_t ControllerNode::mutex = PTHREAD_MUTEX_INITIALIZER;
 Client* ControllerNode::_Client;
