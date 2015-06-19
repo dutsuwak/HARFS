@@ -1,6 +1,11 @@
 #include "socketserver.h"
 
 
+int SocketServer::_Port = 0;
+int SocketServer::descriptor = 0;
+sockaddr_in SocketServer::info;
+vector<int> SocketServer::clientes;
+
 SocketServer::SocketServer(int pPort)
 {
 	this->_Port = pPort;
@@ -29,7 +34,7 @@ bool SocketServer::ligar_kernel()
 }
 
 
-void SocketServer::run()
+void* SocketServer::run(void* pData)
 {
     if(!crear_Socket())
         throw string("Error al crear el socket");

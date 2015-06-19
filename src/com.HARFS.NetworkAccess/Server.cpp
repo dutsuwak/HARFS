@@ -38,38 +38,92 @@ void* Server::threadListen(void* pData){
 			  error("ERROR on binding");}
 	 listen(sockfd,5);
 	 clilen = sizeof(cli_addr);
-	 newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr,&clilen);
-	 if (newsockfd < 0)
-		 error("ERROR on accept");
 	 while(true){
-		sleep(0.2);
+		 newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr,&clilen);
+	 	 if (newsockfd < 0)
+		 	 error("ERROR on accept");
+		 pthread_t hiloNuevoCliente;
+		 pthread_create(&hiloNuevoCliente,0,Server::receiveNewClient,(void*)newsockfd);
+	 }
 
+	close(sockfd);
+	pthread_exit(NULL);
+}
+
+void* Server::receiveNewClient(void* newsockfd){
+	sleep(0.2);
+	if(ControllerConstants::DEBUG == "true")
+		cout<<"Server.receiveNewClient()		 Nuevo cliente se ha conectado\n";
+	int n;
+	char buffer[256], userName[128], password[128];
+	bzero(buffer,256);
+	bzero(userName,128);
+	bzero(password,128);
+
+	n=write(newsockfd,"-------------Bienvenido------------- \n",41);
+	n=write(newsockfd,"digite (L) para ingresar (R) para registrarse \n",48);
+	n=read(newsockfd,buffer,1);
+
+	//string opcion = string(buffer);
+	//int a = opcion.compare("R")==0;
+
+	if(strcmp ("R",buffer) == 0){//recibir los nuevos datos
+		read(newsockfd,buffer,128);
+		write(newsockfd,"Ingrese su nombre de usuario: \n",33);
+		read(newsockfd,userName,128);
+		write(newsockfd,"Ingrese su contraseña: \n",25);
+		read(newsockfd,password,128);
+		write(newsockfd,"Vuelva a conectarse con sus nueva credencial\n",45);
+//		pthread_mutex_lock(&mutex);
+		//{"records":[{"time":"0"}]}  Formato Json
+		//_UserList->insertTail(string(userName)+string(password));
+		//_MessagesList->insertTail("{\"Accion\":\""+opcion+"\",\"Usuario\":\""+string(userName)+"\",\"Contrasena\":\""+string(password))+"\"}"; //mensaje en formato jSon
+//		pthread_mutex_unlock(&mutex);
+		if(ControllerConstants::DEBUG=="true")
+		cout<<"Server.receiveNewClient() 		Nuevo usuario creado\n";
+		close(newsockfd);
+		pthread_exit(NULL);
+	}else{//validar las credenciales
+		n=read(newsockfd,buffer,128);
+		n=write(newsockfd,"Ingrese su nombre de usuario: \n",33);
+		n=read(newsockfd,userName,128);
+		n=write(newsockfd,"Ingrese su contraseña: \n",25);
+		n=read(newsockfd,password,128);
+
+		cout<<"usuario: "<<userName<<endl;
+		cout<<"pass: "<<password<<endl;
+	}
+
+	while(true){
 		bzero(buffer,256);
-		cout<<"=============="<<endl;
 		n = read(newsockfd,buffer,255);
 		if (n < 0)
-		 error("ERROR reading from socket");
+			error("ERROR reading from socket");
 		string str = string(buffer);
+
+
+		pthread_mutex_lock(&mutex);
+		_MessagesList->insertTail(str);
+		pthread_mutex_unlock(&mutex);
+
 		if(str.length()>2)
-
-			pthread_mutex_lock(&mutex);
-			_MessagesList->insertTail(str);
-			pthread_mutex_unlock(&mutex);
-
 			cout<<"Mensaje recibido::: "<<str<<endl;
 
-		/*if( str.compare("CLOSE") == 2 && str.length() == 7){
+		if( str.compare("CLOSE") == 2){
 			break;
-		}*/
-	//	printf("Here is the message: %s\n",buffer);
-	//	n = write(newsockfd,"Recibi tu mensaje\n ",18);
-	//	if (n < 0)
-	//	 error("ERROR writing to socket");
+		}
+//		if( str.compare("CLOSE") == 2 && str.length() == 7){
+//			break;
+//		}
+		//	printf("Here is the message: %s\n",buffer);
+		//	n = write(newsockfd,"Recibi tu mensaje\n ",18);
+		//	if (n < 0)
+		//	 error("ERROR writing to socket");
 
 	}
-	cout<<"Sesion del controller node terminada \n";
+	cout<<"Server.receiveNewClient() 		Sesion del cliente terminada \n";
 	close(newsockfd);
-	close(sockfd);
+
 	pthread_exit(NULL);
 }
 

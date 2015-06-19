@@ -23,16 +23,17 @@ class SocketServer
 {
 public:
     SocketServer(int pPort);
-    void run();
+    static void* run(void* pData);
     void setMensaje(const char *msn);
 private:
-    int _Port;
-    int descriptor;
-    sockaddr_in info;
-    bool crear_Socket();
-    bool ligar_kernel();
+    static int _Port;
+    static int descriptor;
+    static sockaddr_in info;
+    static vector<int> clientes;
+    static bool crear_Socket();
+    static bool ligar_kernel();
     static void * controladorCliente(void *obj);
-    vector<int> clientes;
+
 };
 
 #endif // SOCKETSERVER_H

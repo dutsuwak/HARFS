@@ -18,6 +18,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "../com.HARFS.DataStructures/LinkedList.h"
+#include "../com.HARFS.DataAccess/ControllerConstants.h"
 
 using namespace std;
 
@@ -26,10 +27,11 @@ private:
 	static int _ListeningPort;
 	static LinkedList<string>* _MessagesList;
 	static pthread_mutex_t mutex;
-
+	//static LinkedList<string>* _UserList;
 public:
 	Server(int pPort);
 	static void* threadListen(void* pData);
+	static void* receiveNewClient(void* newsockfd);
 	static void error(const char *msg);
 	string getFirstMessage();
 
