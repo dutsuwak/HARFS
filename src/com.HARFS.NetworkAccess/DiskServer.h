@@ -1,12 +1,12 @@
 /*
- * Server.h
+ * DiskServer.h
  *
- *  Created on: May 30, 2015
+ *  Created on: Jun 18, 2015
  *      Author: abrahamon
  */
 
-#ifndef NETWORKACCESS_SERVER_H_
-#define NETWORKACCESS_SERVER_H_
+#ifndef COM_HARFS_NETWORKACCESS_DISKSERVER_H_
+#define COM_HARFS_NETWORKACCESS_DISKSERVER_H_
 
 #include <pthread.h>
 #include <iostream>
@@ -22,14 +22,14 @@
 
 using namespace std;
 
-class Server{
+class DiskServer{
 private:
 	static int _ListeningPort;
 	static LinkedList<string>* _MessagesList;
 	static pthread_mutex_t mutex;
 	//static LinkedList<string>* _UserList;
 public:
-	Server(int pPort);
+	DiskServer(int pPort);
 	static void* threadListen(void* pData);
 	static void* receiveNewClient(void* newsockfd);
 	static void error(const char *msg);
@@ -37,8 +37,4 @@ public:
 
 };
 
-#endif /* NETWORKACCESS_SERVER_H_ */
-
-
-
-
+#endif /* COM_HARFS_NETWORKACCESS_DISKSERVER_H_ */

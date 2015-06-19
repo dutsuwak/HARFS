@@ -7,6 +7,7 @@
 
 #include "ControllerNode.h"
 
+SocketServer* ControllerNode::_ServerSocket;
 Server* ControllerNode::_Server;
 pthread_mutex_t ControllerNode::mutex = PTHREAD_MUTEX_INITIALIZER;
 Client* ControllerNode::_Client;
@@ -18,8 +19,17 @@ ControllerNode::ControllerNode() {
 	if(ControllerConstants::DEBUG=="true")
 		cout<<"CREANDO controller node, escucha en: "<<_Port<<endl;
 	_Server = new Server(_Port);
+
+	//_ServerSocket = new SocketServer(_Port);
+
+
+	//pthread_t hilo;
+	//pthread_create(&hilo,0,SocketServer::run,(void*)this);
+	//_ServerSocket->run();
+
 	pthread_t hiloCliente;
 	pthread_create(&hiloCliente,0,ControllerNode::getMessageFromSocket,(void*)this);
+
 
 	string TmpIPS = ControllerConstants::DISK_NODES->getHead()->getData();
 	char sep = ':';
@@ -38,8 +48,7 @@ ControllerNode::ControllerNode() {
 
 void* ControllerNode::getMessageFromSocket(void* pData) {
 	while(true){
-		sleep(0.2);
-
+		sleep(1);
 		pthread_mutex_lock(&mutex);
 
 		string msj=_Server->getFirstMessage();
