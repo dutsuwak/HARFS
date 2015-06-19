@@ -51,7 +51,7 @@ void* Server::threadListen(void* pData){
 }
 
 void* Server::receiveNewClient(void* newsockfd){
-	sleep(0.2);
+
 	if(ControllerConstants::DEBUG == "true")
 		cout<<"Server.receiveNewClient()		 Nuevo cliente se ha conectado\n";
 	int n;
@@ -59,21 +59,28 @@ void* Server::receiveNewClient(void* newsockfd){
 	bzero(buffer,256);
 	bzero(userName,128);
 	bzero(password,128);
+	string ans="";
+	bool opc = true;
+	while(true){
+		write(newsockfd,"digite 'INGRESAR' O 'REGISTRAR' \n",34);
+		read(newsockfd,buffer,sizeof(buffer)-1);
+		ans = string(buffer);
+		if(ans.compare("REGISTRAR") == 2)
+			break;
+		if(ans.compare("INGRESAR") == 2){
+			opc = false;
+			break;
+		}
+		bzero(buffer,256);
+	}
 
-	n=write(newsockfd,"-------------Bienvenido------------- \n",41);
-	n=write(newsockfd,"digite (L) para ingresar (R) para registrarse \n",48);
-	n=read(newsockfd,buffer,1);
 
-	//string opcion = string(buffer);
-	//int a = opcion.compare("R")==0;
-
-	if(strcmp ("R",buffer) == 0){//recibir los nuevos datos
-		read(newsockfd,buffer,128);
+	if(opc == true){//recibir los nuevos datos
 		write(newsockfd,"Ingrese su nombre de usuario: \n",33);
-		read(newsockfd,userName,128);
-		write(newsockfd,"Ingrese su contraseña: \n",25);
-		read(newsockfd,password,128);
-		write(newsockfd,"Vuelva a conectarse con sus nueva credencial\n",45);
+		read(newsockfd,userName,sizeof(userName)-1);
+		write(newsockfd,"Ingrese su contraseña: \n",sizeof("Ingrese su contraseña: \n"));
+		read(newsockfd,password,sizeof(password)-1);
+		write(newsockfd,"Vuelva a conectarse con sus nueva credencial\n",sizeof("Vuelva a conectarse con sus nueva credencial\n"));
 //		pthread_mutex_lock(&mutex);
 		//{"records":[{"time":"0"}]}  Formato Json
 		//_UserList->insertTail(string(userName)+string(password));
@@ -84,11 +91,11 @@ void* Server::receiveNewClient(void* newsockfd){
 		close(newsockfd);
 		pthread_exit(NULL);
 	}else{//validar las credenciales
-		n=read(newsockfd,buffer,128);
-		n=write(newsockfd,"Ingrese su nombre de usuario: \n",33);
-		n=read(newsockfd,userName,128);
-		n=write(newsockfd,"Ingrese su contraseña: \n",25);
-		n=read(newsockfd,password,128);
+
+		write(newsockfd,"Ingrese su nombre de usuario: \n",33);
+		read(newsockfd,userName,128);
+		write(newsockfd,"Ingrese su contraseña: \n",25);
+		read(newsockfd,password,128);
 
 		cout<<"usuario: "<<userName<<endl;
 		cout<<"pass: "<<password<<endl;
