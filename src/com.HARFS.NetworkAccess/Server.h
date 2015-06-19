@@ -19,6 +19,7 @@
 #include <netinet/in.h>
 #include "../com.HARFS.DataStructures/LinkedList.h"
 #include "../com.HARFS.DataAccess/ControllerConstants.h"
+#include "../com.HARFS.NetworkAccess/user.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ private:
 	static int _ListeningPort;
 	static LinkedList<string>* _MessagesList;
 	static pthread_mutex_t mutex;
-	//static LinkedList<string>* _UserList;
+	static LinkedList<user*>* _UserList;
 public:
 	Server(int pPort);
 	static void* threadListen(void* pData);

@@ -14,7 +14,7 @@
 #include "../com.HARFS.DataStructures/LinkedList.h"
 #include "../com.HARFS.NetworkAccess/Server.h"
 #include "../com.HARFS.NetworkAccess/Client.h"
-#include "../com.HARFS.NetworkAccess/socketserver.h"
+#include "../com.HARFS.NetworkAccess/user.h"
 
 using namespace std;
 
@@ -25,7 +25,6 @@ private:
 	int _Port;
 	LinkedList<string>* _DiskNodes;
 	static pthread_mutex_t mutex;
-	static SocketServer* _ServerSocket;
 	static Server* _Server;
 	static Client* _Client;
 
