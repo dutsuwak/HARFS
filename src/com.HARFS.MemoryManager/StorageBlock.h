@@ -12,6 +12,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "../com.HARFS.DataStructures/LinkedList.h"
+#include "../com.HARFS.DataStructures/LinkedNode.h"
 using namespace std;
 
 class StorageBlock{
@@ -20,7 +22,9 @@ public:
 	StorageBlock(string pName, string pType, string pRaid, string UID);
 	void getInfo();
 	string getUID();
+	void setScheme(LinkedList<string>* pList);
 private:
+	LinkedList <string> *schemeDisk = new LinkedList<string>();
 	string storageName;
 	string storageType;
 	string RAIDType;

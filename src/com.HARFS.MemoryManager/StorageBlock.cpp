@@ -30,3 +30,8 @@ void StorageBlock::getInfo(){
 string StorageBlock::getUID() {
 	return UID;
 }
+
+
+void StorageBlock::setScheme(LinkedList<string>* pList) {
+	schemeDisk =  pList;
+}

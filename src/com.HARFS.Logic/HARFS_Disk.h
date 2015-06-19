@@ -14,6 +14,7 @@
 #include "../com.HARFS.DataStructures/LinkedList.h"
 #include "../com.HARFS.DataAccess/DiskConstants.h"
 #include "../com.HARFS.MemoryManager/StorageBlock.h"
+#include "../com.HARFS.NetworkAccess/DiskServer.h"
 using namespace std;
 class HARFS_Disk{
 
@@ -22,7 +23,7 @@ public:
 	void createStorageBlock(string pData);
 	void listStorageBlock();
 	void deleteStorageBlock(string UID);
-	void defineStorageBlock();
+	void defineStorageBlock(string UID, string pData);
 	void saveRecord();
 	void deleteRecord();
 	void SearchRecord();
@@ -32,7 +33,7 @@ public:
 	string createUID(string pData);
 private:
 	LinkedList <StorageBlock*> *listStorageBlocks = new LinkedList <StorageBlock*>();
-
+	DiskServer* server = new DiskServer(DiskConstants::PORT);
 
 };
 

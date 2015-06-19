@@ -45,18 +45,43 @@ void HARFS_Disk::listStorageBlock() {
 }
 
 void HARFS_Disk::deleteStorageBlock(string pUID) {
-	StorageBlock *tmp;
-	tmp = listStorageBlocks->getHead()->getData();
+	Node<StorageBlock*>* tmp;
+	tmp = listStorageBlocks->getHead();
 	for (int i = 0; i < listStorageBlocks->getLength(); i++){
-		if (tmp->getUID() == pUID){
-			listStorageBlocks->deleteData(tmp);
+		if (tmp->getData()->getUID() == pUID){
+			listStorageBlocks->deleteData(tmp->getData());
+
 		}
-		tmp = listStorageBlocks->getHead()->getNext()->getData();
+		tmp = tmp->getNext();
 	}
 
 }
 
-void HARFS_Disk::defineStorageBlock(string pUID) {
+void HARFS_Disk::defineStorageBlock(string pUID,string pData) {
+	LinkedList <string> * infoRegistro = new LinkedList <string>();
+	string CampoTipoTamano = "";
+
+	for (int i = 0 ; i < pData.length(); i++){
+		if(pData[i] == '#'){
+			infoRegistro->insertTail(CampoTipoTamano);
+			CampoTipoTamano = "";
+
+		}
+		else{
+			CampoTipoTamano += boost::lexical_cast<std::string>(pData[i]);
+		}
+
+	}
+	/*Prueba de almacenar el esquema*/
+//	Node<string>* tmp;
+//	tmp = infoRegistro->getHead();
+//	for (int i = 0; i < infoRegistro->getLength(); i++){
+//		cout<<tmp->getData()<<endl;
+//		tmp = tmp->getNext();
+//	}
+
+
+
 
 }
 

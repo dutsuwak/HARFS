@@ -9,10 +9,12 @@
 
 int Server::_ListeningPort = 0;
 LinkedList<string>* Server::_MessagesList =0;
+LinkedList<user*>* Server::_UserList;
 pthread_mutex_t Server::mutex = PTHREAD_MUTEX_INITIALIZER;
 
 Server::Server( int pPort) {
 	_MessagesList = new LinkedList<string>();
+	_UserList = new LinkedList<user*>();
 	_ListeningPort = pPort;
 	pthread_t hilo;
 	pthread_create(&hilo,0,Server::threadListen,(void*)this);
@@ -81,13 +83,12 @@ void* Server::receiveNewClient(void* newsockfd){
 		write(newsockfd,"Ingrese su contraseña: \n",sizeof("Ingrese su contraseña: \n"));
 		read(newsockfd,password,sizeof(password)-1);
 		write(newsockfd,"Vuelva a conectarse con sus nueva credencial\n",sizeof("Vuelva a conectarse con sus nueva credencial\n"));
-//		pthread_mutex_lock(&mutex);
-		//{"records":[{"time":"0"}]}  Formato Json
-		//_UserList->insertTail(string(userName)+string(password));
-		//_MessagesList->insertTail("{\"Accion\":\""+opcion+"\",\"Usuario\":\""+string(userName)+"\",\"Contrasena\":\""+string(password))+"\"}"; //mensaje en formato jSon
-//		pthread_mutex_unlock(&mutex);
+		pthread_mutex_lock(&mutex);
+		user* newUser = new user(string(userName),(string)(password));
+		_UserList->insertTail(newUser);
+		pthread_mutex_unlock(&mutex);
 		if(ControllerConstants::DEBUG=="true")
-		cout<<"Server.receiveNewClient() 		Nuevo usuario creado\n";
+		cout<<"Server.receiveNewClient() 		Nuevo usuario '"<<(string)userName;
 		close(newsockfd);
 		pthread_exit(NULL);
 	}else{//validar las credenciales
@@ -97,8 +98,25 @@ void* Server::receiveNewClient(void* newsockfd){
 		write(newsockfd,"Ingrese su contraseña: \n",25);
 		read(newsockfd,password,128);
 
-		cout<<"usuario: "<<userName<<endl;
-		cout<<"pass: "<<password<<endl;
+		if(_UserList->getLength()==0){
+			write(newsockfd,"No hay usuarios registrados \n",32);
+			close(newsockfd);
+			pthread_exit(NULL);
+		}
+		Node<user*>* tmp = _UserList->getHead();
+		for(int i=0; i<_UserList->getLength();i++){
+			if(!(tmp->getData()->SoyEste(userName,password))){
+				write(newsockfd,"Credenciales erroneas \n",25);
+				close(newsockfd);
+				pthread_exit(NULL);
+			}
+			tmp = tmp->getNext();
+		}
+		if(ControllerConstants::DEBUG =="true")
+			cout<<"Login con exito de: "<<userName<<endl;
+		write(newsockfd,"Credenciales correctas \n",26);
+		//cout<<"usuario: "<<userName<<endl;
+		//cout<<"pass: "<<password<<endl;
 	}
 
 	while(true){
@@ -108,29 +126,17 @@ void* Server::receiveNewClient(void* newsockfd){
 			error("ERROR reading from socket");
 		string str = string(buffer);
 
-
-		pthread_mutex_lock(&mutex);
-		_MessagesList->insertTail(str);
-		pthread_mutex_unlock(&mutex);
-
-		if(str.length()>2)
+		if(str.length()>2 && ControllerConstants::DEBUG=="true")
 			cout<<"Mensaje recibido::: "<<str<<endl;
-
 		if( str.compare("CLOSE") == 2){
 			break;
 		}
-//		if( str.compare("CLOSE") == 2 && str.length() == 7){
-//			break;
-//		}
-		//	printf("Here is the message: %s\n",buffer);
-		//	n = write(newsockfd,"Recibi tu mensaje\n ",18);
-		//	if (n < 0)
-		//	 error("ERROR writing to socket");
-
+		pthread_mutex_lock(&mutex);
+		_MessagesList->insertTail(str);
+		pthread_mutex_unlock(&mutex);
 	}
 	cout<<"Server.receiveNewClient() 		Sesion del cliente terminada \n";
 	close(newsockfd);
-
 	pthread_exit(NULL);
 }
 

@@ -11,6 +11,7 @@
 Server* ControllerNode::_Server;
 pthread_mutex_t ControllerNode::mutex = PTHREAD_MUTEX_INITIALIZER;
 Client* ControllerNode::_Client;
+
 ControllerNode::ControllerNode() {
 
 	_SharedSecret = ControllerConstants::SHARED_SECRET;
@@ -48,7 +49,7 @@ ControllerNode::ControllerNode() {
 
 void* ControllerNode::getMessageFromSocket(void* pData) {
 	while(true){
-		sleep(1);
+		sleep(0.5);
 		pthread_mutex_lock(&mutex);
 
 		string msj=_Server->getFirstMessage();

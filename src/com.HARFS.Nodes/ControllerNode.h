@@ -14,6 +14,7 @@
 #include "../com.HARFS.DataStructures/LinkedList.h"
 #include "../com.HARFS.NetworkAccess/Server.h"
 #include "../com.HARFS.NetworkAccess/Client.h"
+#include "../com.HARFS.NetworkAccess/user.h"
 
 
 using namespace std;
