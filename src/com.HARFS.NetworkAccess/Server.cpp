@@ -69,16 +69,13 @@ void* Server::receiveNewClient(void* pNewsockfd){
 		//string str(buffer);
 		string str = Server::getWordIn(buffer);
 		//string str(buffer, sizeof(buffer));
-		cout<<"."<<str<<"."<<endl;
 		bzero(buffer,256);
 		if(str == "registrar"){
 		//if(ans.compare("registrar") == 2){
-			cout<<"nuevo ingreso\n";
 			break;
 		}
 		else if(str == "ingresar"){
 		//else if(ans.compare("ingresar") == 2){
-			cout<<"nuevo ingreso\n";
 			opc = false;
 			break;
 		}
@@ -126,7 +123,10 @@ void* Server::receiveNewClient(void* pNewsockfd){
 		cout<<"password: "<<password<<"."<<endl;
 		Node<user*>* tmp = _UserList->getHead();
 		for(int i=0; i<_UserList->getLength();i++){
-			if(!(tmp->getData()->SoyEste(username,password))){					//	VACIO
+			if(!(tmp->getData()->SoyEste(username,password))){
+				break;
+			}
+			if(tmp->getNext()==0){
 				write(newsockfd,"Credenciales erroneas \n",24);
 				close(newsockfd);
 				pthread_exit(NULL);
@@ -153,14 +153,14 @@ void* Server::receiveNewClient(void* pNewsockfd){
 		}
 		if(str.compare("--HELP")==2){
 			write(newsockfd,"------------------AYUDA------------- \n",40);
-			write(newsockfd,"1. CSB + nombre + Tipo de Organizacion(LinkedList) + Tipo de Raid(NoRaid,Raid) \n",81);
-			write(newsockfd,"2. LSB  \n",10);
-			write(newsockfd,"3. BST + UID \n",15);
-			write(newsockfd,"4. DESB + Name:Type:Size + … + NameN:TypeN:SizeN \n",52);
-			write(newsockfd,"5. AR  \n",9);
-			write(newsockfd,"6. BR  \n",9);
-			write(newsockfd,"7. B + Clave De Busqueda + Columna \n",37);
-			write(newsockfd,"8. OR + Desplazamiento  \n",26);
+			write(newsockfd,"1. csb + nombre + Tipo de Organizacion(LinkedList) + Tipo de Raid(NoRaid,Raid) \n",81);
+			write(newsockfd,"2. lsb  \n",10);
+			write(newsockfd,"3. bst + UID \n",15);
+			write(newsockfd,"4. desb + Name:Type:Size + … + NameN:TypeN:SizeN \n",52);
+			write(newsockfd,"5. ar  \n",9);
+			write(newsockfd,"6. br  \n",9);
+			write(newsockfd,"7. b + Clave De Busqueda + Columna \n",37);
+			write(newsockfd,"8. or + Desplazamiento  \n",26);
 			write(newsockfd,"9. CLOSE  \n",12);
 		}
 		else if(str.length() > 2 ){
@@ -194,30 +194,30 @@ bool Server::formatoCorrecto(string pCommand){
 	}
 	Node<string>* tmp = internal->getHead();
 
-	if(tmp->getData().compare("CSB")==0){			//Creat storage block
+	if(tmp->getData().compare("csb")==0){			//Creat storage block
 		tmp = tmp->getNext()->getNext();
 		if(internal->getLength() == 4 && tmp->getData().compare("LinkedList")==0 && ( tmp->getNext()->getData().compare("NoRaid") || tmp->getNext()->getData().compare("Raid")))
 			ans = true;
 	}
-	else if(tmp->getData().compare("LSB")==0 && internal->getLength()==1){		//Listar Storage Block
+	else if(tmp->getData().compare("lsb")==0 && internal->getLength()==1){		//Listar Storage Block
 			ans =true;
 	}
-	else if(tmp->getData().compare("BST")==0 && internal->getLength()==2){		//Borrar storage block
+	else if(tmp->getData().compare("bst")==0 && internal->getLength()==2){		//Borrar storage block
 		ans =true;
 	}
-	else if(tmp->getData().compare("DESB")==0 && internal->getLength()>1){		//definir esquema sobre el storage block
+	else if(tmp->getData().compare("desb")==0 && internal->getLength()>1){		//definir esquema sobre el storage block
 		ans =true;
 	}
-	else if(tmp->getData().compare("AR")==0 && internal->getLength()==1){		//Almacenar registro
+	else if(tmp->getData().compare("ar")==0 && internal->getLength()==1){		//Almacenar registro
 		ans =true;
 	}
-	else if(tmp->getData().compare("BR")==0 && internal->getLength()==1){		//Borrar registro
+	else if(tmp->getData().compare("br")==0 && internal->getLength()==1){		//Borrar registro
 		ans =true;
 	}
-	else if(tmp->getData().compare("B")==0 && internal->getLength()==3){		//Buscar registro
+	else if(tmp->getData().compare("b")==0 && internal->getLength()==3){		//Buscar registro
 		ans =true;
 	}
-	else if(tmp->getData().compare("OR")==0 && internal->getLength()==2){		//Obtener registro
+	else if(tmp->getData().compare("or")==0 && internal->getLength()==2){		//Obtener registro
 		ans =true;
 	}
 
@@ -243,21 +243,21 @@ string Server::getFirstMessage(){
 
 string Server::getWordIn(char pData[]){
 	std::string str="";
-//	int n=0;
-//	for(int i = 0; pData[i] != ' '; i++){
-//		str += pData[i];
-//		n++;
-//	}
-	for(int i =0; i<sizeof(pData)+1;i++){
-		if (pData[i] != ' ' || pData[i] != '\t' || pData[i] != '\r' || pData[i] != '\n' || pData[i] != '\x0b') {
+	int asciiValue;
+	for(int i =0; i<=sizeof(pData);i++){
+		asciiValue = pData[i];
+		if (pData[i] != ' ' && pData[i] != '\t' && pData[i] != '\r' && pData[i] != '\n' && pData[i] != '\x0b' && asciiValue !=13 && asciiValue != 10){
 			str= str+pData[i];
 		}else{
-			cout<<"1 palabra: "<<str<<"."<<endl;
 			return str;
 		}
 	}
-	cout<<"2 palabra: "<<str<<"."<<endl;
 	return str;
+}
+
+LinkedList<string>* Server::getListOfWordsIn(char pData[]){
+	LinkedList<string>* lista = new LinkedList<string>();
+
 }
 
 

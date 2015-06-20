@@ -39,6 +39,7 @@ public:
 	string getFirstMessage();
 	static bool formatoCorrecto(string pComando);
 	static string getWordIn(char pData[]);
+	static LinkedList<string>* getListOfWordsIn(char pData[]);
 };
 
 #endif /* NETWORKACCESS_SERVER_H_ */
