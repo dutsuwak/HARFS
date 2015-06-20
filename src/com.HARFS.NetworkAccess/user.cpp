@@ -21,3 +21,11 @@ bool user::SoyEste(string pName, string pPassword){
 	else
 		return false;
 }
+
+void user::setUID(string pUID){
+	this->_UID = pUID;
+}
+
+string user::getUID(){
+	return _UID;
+}

@@ -8,12 +8,14 @@
 #include "../com.HARFS.NetworkAccess/Server.h"
 
 int Server::_ListeningPort = 0;
-LinkedList<string>* Server::_MessagesList =0;
+LinkedList<string>* Server::_MensajesRecibidosDelUsuario =0;
+LinkedList<string>* Server::_MensajesRecibidosDelDiskNode;
 LinkedList<user*>* Server::_UserList;
 pthread_mutex_t Server::mutex = PTHREAD_MUTEX_INITIALIZER;
 
 Server::Server( int pPort) {
-	_MessagesList = new LinkedList<string>();
+	_MensajesRecibidosDelUsuario = new LinkedList<string>();
+	_MensajesRecibidosDelDiskNode = new LinkedList<string>();
 	_UserList = new LinkedList<user*>();
 	_ListeningPort = pPort;
 	pthread_t hilo;
@@ -56,66 +58,83 @@ void* Server::receiveNewClient(void* pNewsockfd){
 	if(ControllerConstants::DEBUG == "true")
 		cout<<"Server.receiveNewClient()		 Nuevo cliente se ha conectado\n";
 	int n;
-	char buffer[256], userName[128], password[128];
+	char buffer[256];
 	bzero(buffer,256);
-	bzero(userName,128);
-	bzero(password,128);
-	string ans="";
+	string username, password;
 	bool opc = true;
 	while(true){
 		write(newsockfd,"digite 'ingresar' O 'registrar' usuario \n",42);
 		read(newsockfd,buffer,sizeof(buffer)-1);
-		ans = string(buffer);
-		if(ans.compare("registrar") == 2){
-			//cout<<"Nuevo registro\n";
+
+		//string str(buffer);
+		string str = Server::getWordIn(buffer);
+		//string str(buffer, sizeof(buffer));
+		cout<<"."<<str<<"."<<endl;
+		bzero(buffer,256);
+		if(str == "registrar"){
+		//if(ans.compare("registrar") == 2){
+			cout<<"nuevo ingreso\n";
 			break;
 		}
-		if(ans.compare("ingresar") == 2){
-			//cout<<"Nuevo ingreso\n";
+		else if(str == "ingresar"){
+		//else if(ans.compare("ingresar") == 2){
+			cout<<"nuevo ingreso\n";
 			opc = false;
 			break;
 		}
-		bzero(buffer,256);
 	}
 
 
 	if(opc == true){//recibir los nuevos datos
 		write(newsockfd,"Ingrese su nuevo nombre de usuario: \n",38);
-		read(newsockfd,userName,sizeof(userName)-1);
+		read(newsockfd,buffer,sizeof(buffer)-1);
+		username = getWordIn(buffer);
+		//username =(string)buffer;
+		bzero(buffer,256);
 		write(newsockfd,"Ingrese su nueva contraseña: \n",32);
-		read(newsockfd,password,sizeof(password)-1);
-		write(newsockfd,"Vuelva a conectarse con sus nueva credencial\n",sizeof("Vuelva a conectarse con sus nueva credencial\n"));
+		read(newsockfd,buffer,sizeof(buffer)-1);
+		//password =(string)buffer;
+		password =getWordIn(buffer);
+		bzero(buffer,256);
+		write(newsockfd,"Vuelva a conectarse con sus nueva credencial \n",47);
+		cout<<"user: "<<username<<"."<<endl;
+		cout<<"password: "<<password<<"."<<endl;
 		pthread_mutex_lock(&mutex);
-		user* newUser = new user(string(userName),(string)(password));
+		user* newUser = new user(username,password);
 		_UserList->insertTail(newUser);
 		pthread_mutex_unlock(&mutex);
 		if(ControllerConstants::DEBUG=="true")
-		cout<<"Server.receiveNewClient() 		Nuevo usuario creado '"<<(string)userName;
+			cout<<"Server.receiveNewClient() 		Nuevo usuario: "<<username<<" pass: "<<password<<" creado \n";
 		close(newsockfd);
 		pthread_exit(NULL);
 	}else{//validar las credenciales
 		if(_UserList->getLength()==0){
-			write(newsockfd,"No hay usuarios registrados \n",32);
+			write(newsockfd,"No hay usuarios registrados \n",31);
 			close(newsockfd);
 			pthread_exit(NULL);
 		}
 		write(newsockfd,"Ingrese su nombre de usuario: \n",32);
-		read(newsockfd,userName,128);
+		read(newsockfd,buffer,sizeof(buffer)-1);
+		username = getWordIn(buffer);
+		bzero(buffer,256);
 		write(newsockfd,"Ingrese su contraseña: \n",25);
-		read(newsockfd,password,128);
+		read(newsockfd,buffer,sizeof(buffer)-1);
+		password = getWordIn(buffer);;
+		bzero(buffer,256);
 
-
+		cout<<"user: "<<username<<"."<<endl;
+		cout<<"password: "<<password<<"."<<endl;
 		Node<user*>* tmp = _UserList->getHead();
 		for(int i=0; i<_UserList->getLength();i++){
-			if(!(tmp->getData()->SoyEste(userName,password))){
-				write(newsockfd,"Credenciales erroneas \n",25);
+			if(!(tmp->getData()->SoyEste(username,password))){					//	VACIO
+				write(newsockfd,"Credenciales erroneas \n",24);
 				close(newsockfd);
 				pthread_exit(NULL);
 			}
 			tmp = tmp->getNext();
 		}
 		if(ControllerConstants::DEBUG =="true")
-			cout<<"Login con exito de: "<<userName<<endl;
+			cout<<"Login con exito de: VACIO!"<<endl;
 		write(newsockfd,"Credenciales correctas \n",25);
 		write(newsockfd,"--HELP para visualizar los comandos \n",38);
 		//cout<<"usuario: "<<userName<<endl;
@@ -124,7 +143,7 @@ void* Server::receiveNewClient(void* pNewsockfd){
 
 	while(true){
 		bzero(buffer,256);
-		n = read(newsockfd,buffer,255);
+		n = read(newsockfd,buffer,sizeof(buffer)-1);
 		if (n < 0)
 			error("ERROR reading from socket");
 		string str = string(buffer);
@@ -148,7 +167,7 @@ void* Server::receiveNewClient(void* pNewsockfd){
 			if(formatoCorrecto(str)){
 				write(newsockfd,"Mensaje enviado correctamente \n",32);
 				pthread_mutex_lock(&mutex);
-				_MessagesList->insertTail(str);
+				_MensajesRecibidosDelUsuario->insertTail(str);
 				pthread_mutex_unlock(&mutex);
 			}else{
 				write(newsockfd,"Comando desconocido \n",21);
@@ -180,25 +199,25 @@ bool Server::formatoCorrecto(string pCommand){
 		if(internal->getLength() == 4 && tmp->getData().compare("LinkedList")==0 && ( tmp->getNext()->getData().compare("NoRaid") || tmp->getNext()->getData().compare("Raid")))
 			ans = true;
 	}
-	else if(tmp->getData().compare("LSB")==0){		//Listar Storage Block
+	else if(tmp->getData().compare("LSB")==0 && internal->getLength()==1){		//Listar Storage Block
+			ans =true;
+	}
+	else if(tmp->getData().compare("BST")==0 && internal->getLength()==2){		//Borrar storage block
 		ans =true;
 	}
-	else if(tmp->getData().compare("BST")==0){		//Borrar storage block
+	else if(tmp->getData().compare("DESB")==0 && internal->getLength()>1){		//definir esquema sobre el storage block
 		ans =true;
 	}
-	else if(tmp->getData().compare("DESB")==0){		//definir esquema sobre el storage block
+	else if(tmp->getData().compare("AR")==0 && internal->getLength()==1){		//Almacenar registro
 		ans =true;
 	}
-	else if(tmp->getData().compare("AR")==0){		//Almacenar registro
+	else if(tmp->getData().compare("BR")==0 && internal->getLength()==1){		//Borrar registro
 		ans =true;
 	}
-	else if(tmp->getData().compare("BR")==0){		//Borrar registro
+	else if(tmp->getData().compare("B")==0 && internal->getLength()==3){		//Buscar registro
 		ans =true;
 	}
-	else if(tmp->getData().compare("B")==0){		//Buscar registro
-		ans =true;
-	}
-	else if(tmp->getData().compare("OR")==0){		//Obtener registro
+	else if(tmp->getData().compare("OR")==0 && internal->getLength()==2){		//Obtener registro
 		ans =true;
 	}
 
@@ -212,12 +231,35 @@ void Server::error(const char *msg)
 
 string Server::getFirstMessage(){
 	pthread_mutex_lock(&mutex);
-	if(_MessagesList->getLength()==0){
+	if(_MensajesRecibidosDelUsuario->getLength()==0){
 		pthread_mutex_unlock(&mutex);
 		return "-1";
 	}
-	string ans = _MessagesList->getHead()->getData();
-	_MessagesList->deleteData(ans);
+	string ans = _MensajesRecibidosDelUsuario->getHead()->getData();
+	_MensajesRecibidosDelUsuario->deleteData(ans);
 	pthread_mutex_unlock(&mutex);
 	return ans;
 }
+
+string Server::getWordIn(char pData[]){
+	std::string str="";
+//	int n=0;
+//	for(int i = 0; pData[i] != ' '; i++){
+//		str += pData[i];
+//		n++;
+//	}
+	for(int i =0; i<sizeof(pData)+1;i++){
+		if (pData[i] != ' ' || pData[i] != '\t' || pData[i] != '\r' || pData[i] != '\n' || pData[i] != '\x0b') {
+			str= str+pData[i];
+		}else{
+			cout<<"1 palabra: "<<str<<"."<<endl;
+			return str;
+		}
+	}
+	cout<<"2 palabra: "<<str<<"."<<endl;
+	return str;
+}
+
+
+
+

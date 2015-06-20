@@ -26,13 +26,15 @@ class Client {
 private:
 	static int _SendPort;
 	static char* _IP;
-	static LinkedList<string>* _MessagesList;
+	static LinkedList<string>* _MensajesParaDiskNode;
+	static LinkedList<string>* _MessagesListReceived;
 	static pthread_mutex_t mutex;
 public:
 	Client(char* pIP,int pPort);
 	static void* threadSendToPort(void* pData);
 	static void error(const char *msg);
 	static void receiveMessage(string pMsj);
+	string getMessageReceived();
 };
 
 #endif /* COM_HARFS_NETWORKACCESS_CLIENT_H_ */

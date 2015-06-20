@@ -27,7 +27,8 @@ using namespace std;
 class Server{
 private:
 	static int _ListeningPort;
-	static LinkedList<string>* _MessagesList;
+	static LinkedList<string>* _MensajesRecibidosDelUsuario;
+	static LinkedList<string>* _MensajesRecibidosDelDiskNode;
 	static pthread_mutex_t mutex;
 	static LinkedList<user*>* _UserList;
 public:
@@ -37,7 +38,7 @@ public:
 	static void error(const char *msg);
 	string getFirstMessage();
 	static bool formatoCorrecto(string pComando);
-
+	static string getWordIn(char pData[]);
 };
 
 #endif /* NETWORKACCESS_SERVER_H_ */

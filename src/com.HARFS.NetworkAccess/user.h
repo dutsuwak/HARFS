@@ -16,11 +16,13 @@ class user {
 private:
 	string _Name;
 	string _Password;
+	string _UID;
 
 public:
 	user(string pName, string pPassword);
 	virtual ~user();
-
+	void setUID(string pUID);
+	string getUID();
 	bool SoyEste(string pName, string pPassword);
 };
 
