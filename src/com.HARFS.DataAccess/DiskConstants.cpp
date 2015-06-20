@@ -11,6 +11,7 @@ DiskConstants* DiskConstants::_DiskConstants;
 string DiskConstants::DEBUG;
 string DiskConstants::SHARED_SECRET;
 string DiskConstants::PATH;
+string DiskConstants::FILES_PATH;
 string DiskConstants::JSONS_PATH;
 int DiskConstants::PORT = 0;
 int DiskConstants::DISK_SIZE = 0;
@@ -27,6 +28,7 @@ DiskConstants::DiskConstants() {
 	PORT = atoi(reader->getParameter("PORT"));
 	DISK_SIZE = atoi(reader->getParameter("DISK_SIZE"));
 	JSONS_PATH = reader->getParameter("JSONS_PATH");
+	FILES_PATH = reader->getParameter("FILES_PATH");
 }
 
 DiskConstants::~DiskConstants() {}
