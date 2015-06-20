@@ -52,8 +52,8 @@ void* DiskServer::threadListen(void* pData){
 
 void* DiskServer::receiveNewClient(void* pNewsockfd){
 	int newsockfd = pNewsockfd;
-	if(ControllerConstants::DEBUG == "true")
-		cout<<"Server.receiveNewClient()		 Nuevo cliente se ha conectado\n";
+	if(DiskConstants::DEBUG == "true")
+		cout<<"Server.receiveNewClient()		 Nuevo controller Node se conecto \n";
 	int n;
 	char buffer[256];
 	bzero(buffer,256);
@@ -69,22 +69,8 @@ void* DiskServer::receiveNewClient(void* pNewsockfd){
 		_MessagesList->insertTail(str);
 		pthread_mutex_unlock(&mutex);
 
-		if(str.length()>2)
-			cout<<"Mensaje recibido::: "<<str<<endl;
-
-		if( str.compare("CLOSE") == 2){
-			break;
-		}
-//		if( str.compare("CLOSE") == 2 && str.length() == 7){
-//			break;
-//		}
-		//	printf("Here is the message: %s\n",buffer);
-		//	n = write(newsockfd,"Recibi tu mensaje\n ",18);
-		//	if (n < 0)
-		//	 error("ERROR writing to socket");
-
 	}
-	cout<<"Server.receiveNewClient() 		Sesion del cliente terminada \n";
+	cout<<"DiskServer.receiveNewClient() 		Sesion del controller node terminada \n";
 	close(newsockfd);
 
 	pthread_exit(NULL);

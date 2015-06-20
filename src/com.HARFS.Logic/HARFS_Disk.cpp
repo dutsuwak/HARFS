@@ -8,8 +8,11 @@
 #include <boost/lexical_cast.hpp>
 #include "../com.HARFS.DataStructures/LinkedNode.h"
 
-HARFS_Disk::HARFS_Disk(){
+DiskServer* HARFS_Disk::server;
+pthread_mutex_t HARFS_Disk::mutex;
 
+HARFS_Disk::HARFS_Disk(){
+	server = new DiskServer(DiskConstants::PORT);
 }
 /**
  * createStorageBlock lee un texto con la informacion de un nuevo
@@ -128,4 +131,37 @@ string HARFS_Disk::createUID(string pData) {
 
 
 	return UID;
+}
+
+void* HARFS_Disk::getMessageFromSocket(void* pData) {
+	while(true){
+		sleep(0.3);
+		pthread_mutex_lock(&mutex);
+		string msj=server->getFirstMessage();
+		pthread_mutex_unlock(&mutex);
+
+		if(msj != "-1"){
+			string str = msj;
+			char delimiter = ' ';
+			//vector<string> internal;
+			LinkedList<string>* internal = new LinkedList<string>();
+			stringstream ss(str); // Turn the string into a stream.
+			string tok;
+			while(getline(ss, tok, delimiter)) {
+				//internal.push_back(tok);
+				internal->insertTail(tok);
+			}
+			msj="";
+			Node<string>* tmp = internal->getHead();
+			for(int i=0; i<internal->getLength();i++){
+				msj=msj+tmp->getData()+"_";
+				tmp = tmp->getNext();
+			}
+			cout<<"mensaje :"<<msj<<endl;
+
+			//Logica para el comando : msj//
+		}
+
+	}
+	pthread_exit(NULL);
 }

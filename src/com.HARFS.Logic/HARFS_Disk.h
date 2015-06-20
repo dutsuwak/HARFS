@@ -10,12 +10,20 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
+#include <pthread.h>
 #include <iostream>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sstream>
 #include "../com.HARFS.DataStructures/LinkedList.h"
 #include "../com.HARFS.DataAccess/DiskConstants.h"
 #include "../com.HARFS.MemoryManager/StorageBlock.h"
 #include "../com.HARFS.NetworkAccess/DiskServer.h"
+
 using namespace std;
+
 class HARFS_Disk{
 
 public:
@@ -33,8 +41,9 @@ public:
 	string createUID(string pData);
 private:
 	LinkedList <StorageBlock*> *listStorageBlocks = new LinkedList <StorageBlock*>();
-	DiskServer* server = new DiskServer(DiskConstants::PORT);
-
+	static DiskServer* server;
+	static void* HARFS_Disk::getMessageFromSocket(void* pData);
+	static pthread_mutex_t mutex;
 };
 
 

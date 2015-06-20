@@ -19,6 +19,7 @@
 #include <netinet/in.h>
 #include <sstream>
 #include "../com.HARFS.DataStructures/LinkedList.h"
+#include "../com.HARFS.DataAccess/DiskConstants.h"
 
 
 using namespace std;
