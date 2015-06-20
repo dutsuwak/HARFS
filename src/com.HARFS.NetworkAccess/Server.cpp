@@ -63,12 +63,15 @@ void* Server::receiveNewClient(void* pNewsockfd){
 	string ans="";
 	bool opc = true;
 	while(true){
-		write(newsockfd,"digite 'INGRESAR' O 'REGISTRAR' \n",34);
+		write(newsockfd,"digite 'ingresar' O 'registrar' usuario \n",42);
 		read(newsockfd,buffer,sizeof(buffer)-1);
 		ans = string(buffer);
-		if(ans.compare("REGISTRAR") == 2)
+		if(ans.compare("registrar") == 2){
+			//cout<<"Nuevo registro\n";
 			break;
-		if(ans.compare("INGRESAR") == 2){
+		}
+		if(ans.compare("ingresar") == 2){
+			//cout<<"Nuevo ingreso\n";
 			opc = false;
 			break;
 		}
@@ -77,9 +80,9 @@ void* Server::receiveNewClient(void* pNewsockfd){
 
 
 	if(opc == true){//recibir los nuevos datos
-		write(newsockfd,"Ingrese su nombre de usuario: \n",32);
+		write(newsockfd,"Ingrese su nuevo nombre de usuario: \n",38);
 		read(newsockfd,userName,sizeof(userName)-1);
-		write(newsockfd,"Ingrese su contraseña: \n",sizeof("Ingrese su contraseña: \n"));
+		write(newsockfd,"Ingrese su nueva contraseña: \n",32);
 		read(newsockfd,password,sizeof(password)-1);
 		write(newsockfd,"Vuelva a conectarse con sus nueva credencial\n",sizeof("Vuelva a conectarse con sus nueva credencial\n"));
 		pthread_mutex_lock(&mutex);
@@ -87,21 +90,21 @@ void* Server::receiveNewClient(void* pNewsockfd){
 		_UserList->insertTail(newUser);
 		pthread_mutex_unlock(&mutex);
 		if(ControllerConstants::DEBUG=="true")
-		cout<<"Server.receiveNewClient() 		Nuevo usuario '"<<(string)userName;
+		cout<<"Server.receiveNewClient() 		Nuevo usuario creado '"<<(string)userName;
 		close(newsockfd);
 		pthread_exit(NULL);
 	}else{//validar las credenciales
-
-		write(newsockfd,"Ingrese su nombre de usuario: \n",32);
-		read(newsockfd,userName,128);
-		write(newsockfd,"Ingrese su contraseña: \n",25);
-		read(newsockfd,password,128);
-
 		if(_UserList->getLength()==0){
 			write(newsockfd,"No hay usuarios registrados \n",32);
 			close(newsockfd);
 			pthread_exit(NULL);
 		}
+		write(newsockfd,"Ingrese su nombre de usuario: \n",32);
+		read(newsockfd,userName,128);
+		write(newsockfd,"Ingrese su contraseña: \n",25);
+		read(newsockfd,password,128);
+
+
 		Node<user*>* tmp = _UserList->getHead();
 		for(int i=0; i<_UserList->getLength();i++){
 			if(!(tmp->getData()->SoyEste(userName,password))){
@@ -141,7 +144,7 @@ void* Server::receiveNewClient(void* pNewsockfd){
 			write(newsockfd,"8. OR + Desplazamiento  \n",26);
 			write(newsockfd,"9. CLOSE  \n",12);
 		}
-		else if(str.length()>2 ){
+		else if(str.length() > 2 ){
 			if(formatoCorrecto(str)){
 				write(newsockfd,"Mensaje enviado correctamente \n",32);
 				pthread_mutex_lock(&mutex);
@@ -172,13 +175,31 @@ bool Server::formatoCorrecto(string pCommand){
 	}
 	Node<string>* tmp = internal->getHead();
 
-	cout<<"comando: "<<pCommand<<endl;
-	cout<<"Largo del comando: "<<internal->getLength()<<endl;
-	cout<<"head dato: "<<tmp->getData()<<endl;
-	if(internal->getLength() == 4 && tmp->getData()=="CSB"){
+	if(tmp->getData().compare("CSB")==0){			//Creat storage block
 		tmp = tmp->getNext()->getNext();
-		if(tmp->getData()=="LinkedList" && (tmp->getNext()->getData()=="NoRaid"||tmp->getNext()->getData()=="Raid"))
-		ans = true;
+		if(internal->getLength() == 4 && tmp->getData().compare("LinkedList")==0 && ( tmp->getNext()->getData().compare("NoRaid") || tmp->getNext()->getData().compare("Raid")))
+			ans = true;
+	}
+	else if(tmp->getData().compare("LSB")==0){		//Listar Storage Block
+		ans =true;
+	}
+	else if(tmp->getData().compare("BST")==0){		//Borrar storage block
+		ans =true;
+	}
+	else if(tmp->getData().compare("DESB")==0){		//definir esquema sobre el storage block
+		ans =true;
+	}
+	else if(tmp->getData().compare("AR")==0){		//Almacenar registro
+		ans =true;
+	}
+	else if(tmp->getData().compare("BR")==0){		//Borrar registro
+		ans =true;
+	}
+	else if(tmp->getData().compare("B")==0){		//Buscar registro
+		ans =true;
+	}
+	else if(tmp->getData().compare("OR")==0){		//Obtener registro
+		ans =true;
 	}
 
 	return ans;
