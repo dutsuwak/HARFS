@@ -54,13 +54,12 @@ void* Client::threadSendToPort(void* pData){
 				n = write(sockfd, cstr ,strlen(cstr));
 				if (n < 0)
 					 error("ERROR writing to socket");
-				cout<<"El mensaje a enviado: "<<_MessagesList->getHead()->getData()<<"\n";
+				cout<<"El mensaje enviado fue: "<<_MessagesList->getHead()->getData()<<"\n";
 				//n = read(sockfd,buffer,255);
 				//cout<<"El mensaje a recibido: "<<buffer<<"\n";
 				_MessagesList->deleteData(_MessagesList->getHead()->getData());
 				pthread_mutex_unlock(&mutex);
 			}
-
 			bzero(buffer,256);
 			if (n < 0)
 				 error("ERROR reading from socket");
@@ -81,6 +80,5 @@ void Client::receiveMessage(string pMsj){
 	pthread_mutex_unlock(&mutex);
 	_MessagesList->insertTail(pMsj);
 	pthread_mutex_unlock(&mutex);
-
 
 }

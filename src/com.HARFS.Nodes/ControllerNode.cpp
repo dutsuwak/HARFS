@@ -17,19 +17,8 @@ ControllerNode::ControllerNode() {
 	_Port = ControllerConstants::LISTENINGPORT;
 	_DiskNodes = new LinkedList<string>();
 	if(ControllerConstants::DEBUG=="true")
-		cout<<"CREANDO controller node, escucha en: "<<_Port<<endl;
+		cout<<"controllerNode() 	 Escucha en: "<<_Port<<endl;
 	_Server = new Server(_Port);
-
-	//_ServerSocket = new SocketServer(_Port);
-
-
-	//pthread_t hilo;
-	//pthread_create(&hilo,0,SocketServer::run,(void*)this);
-	//_ServerSocket->run();
-
-	pthread_t hiloCliente;
-	pthread_create(&hiloCliente,0,ControllerNode::getMessageFromSocket,(void*)this);
-
 
 	string TmpIPS = ControllerConstants::DISK_NODES->getHead()->getData();
 	char sep = ':';
@@ -43,7 +32,9 @@ ControllerNode::ControllerNode() {
 	char* pIP = ans[0].c_str();
 	_Client = new Client(pIP,pPort);
 	if(ControllerConstants::DEBUG=="true")
-			cout<<"Envia a: "<<pIP<<":"<<pPort<<endl;
+			cout<<"controllerNode() envia a: "<<pIP<<":"<<pPort<<endl;
+	pthread_t hiloCliente;
+	pthread_create(&hiloCliente,0,ControllerNode::getMessageFromSocket,(void*)this);
 }
 
 void* ControllerNode::getMessageFromSocket(void* pData) {
@@ -70,8 +61,8 @@ void* ControllerNode::getMessageFromSocket(void* pData) {
 				msj=msj+tmp->getData()+"_";
 				tmp = tmp->getNext();
 			}
-			cout<<"mensaje :"<<msj<<endl;
-			_Client->receiveMessage(msj+"_");
+			_Client->receiveMessage(msj);
+			//cout<<"tesxt : "<<msj<<endl;
 		}
 
 	}
