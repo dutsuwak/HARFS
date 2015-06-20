@@ -1,12 +1,12 @@
 /*
- * Server.h
+ * DiskServer.h
  *
- *  Created on: May 30, 2015
+ *  Created on: Jun 18, 2015
  *      Author: abrahamon
  */
 
-#ifndef NETWORKACCESS_SERVER_H_
-#define NETWORKACCESS_SERVER_H_
+#ifndef COM_HARFS_NETWORKACCESS_DISKSERVER_H_
+#define COM_HARFS_NETWORKACCESS_DISKSERVER_H_
 
 #include <pthread.h>
 #include <iostream>
@@ -15,33 +15,28 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sstream>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sstream>
 #include "../com.HARFS.DataStructures/LinkedList.h"
-#include "../com.HARFS.DataAccess/ControllerConstants.h"
-#include "../com.HARFS.NetworkAccess/user.h"
+#include "../com.HARFS.DataAccess/DiskConstants.h"
+
 
 using namespace std;
 
-class Server{
+class DiskServer{
 private:
 	static int _ListeningPort;
 	static LinkedList<string>* _MessagesList;
 	static pthread_mutex_t mutex;
-	static LinkedList<user*>* _UserList;
+	//static LinkedList<string>* _UserList;
 public:
-	Server(int pPort);
+	DiskServer(int pPort);
 	static void* threadListen(void* pData);
 	static void* receiveNewClient(void* newsockfd);
 	static void error(const char *msg);
 	string getFirstMessage();
-	static bool formatoCorrecto(string pComando);
 
 };
 
-#endif /* NETWORKACCESS_SERVER_H_ */
-
-
-
-
+#endif /* COM_HARFS_NETWORKACCESS_DISKSERVER_H_ */

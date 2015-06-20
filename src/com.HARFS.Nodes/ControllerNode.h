@@ -10,10 +10,18 @@
 
 #include <pthread.h>
 #include <unistd.h>
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+
 #include "../com.HARFS.DataAccess/ControllerConstants.h"
 #include "../com.HARFS.DataStructures/LinkedList.h"
 #include "../com.HARFS.NetworkAccess/Server.h"
 #include "../com.HARFS.NetworkAccess/Client.h"
+#include "../com.HARFS.NetworkAccess/user.h"
+
 
 using namespace std;
 

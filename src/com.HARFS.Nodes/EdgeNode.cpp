@@ -9,7 +9,7 @@
 
 EdgeNode::EdgeNode() {
 	// TODO Auto-generated constructor stub
-
+	
 }
 
 EdgeNode::~EdgeNode() {

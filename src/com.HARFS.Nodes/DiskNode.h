@@ -23,6 +23,7 @@ private:
 	int _DiskSize;
 	int _Port;
 
+
 public:
 	DiskNode();
 	virtual ~DiskNode();

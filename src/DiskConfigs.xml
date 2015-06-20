@@ -1,7 +1,7 @@
 <root>
-	<DEBUG value = "true" />
+	<DEBUG value = "false" />
 	<SHARED_SECRET value = "a" />
-	<PORT value = "8088" />
+	<PORT value = "8080" />
 	<PATH value = "vacio" />
 	<JSONS_PATH value = "vacio"/>
 	<DISK_SIZE value = "100" />

@@ -7,9 +7,11 @@
 
 #include "ControllerNode.h"
 
+
 Server* ControllerNode::_Server;
 pthread_mutex_t ControllerNode::mutex = PTHREAD_MUTEX_INITIALIZER;
 Client* ControllerNode::_Client;
+
 ControllerNode::ControllerNode() {
 
 	_SharedSecret = ControllerConstants::SHARED_SECRET;
@@ -18,8 +20,17 @@ ControllerNode::ControllerNode() {
 	if(ControllerConstants::DEBUG=="true")
 		cout<<"CREANDO controller node, escucha en: "<<_Port<<endl;
 	_Server = new Server(_Port);
+
+	//_ServerSocket = new SocketServer(_Port);
+
+
+	//pthread_t hilo;
+	//pthread_create(&hilo,0,SocketServer::run,(void*)this);
+	//_ServerSocket->run();
+
 	pthread_t hiloCliente;
 	pthread_create(&hiloCliente,0,ControllerNode::getMessageFromSocket,(void*)this);
+
 
 	string TmpIPS = ControllerConstants::DISK_NODES->getHead()->getData();
 	char sep = ':';
@@ -38,15 +49,31 @@ ControllerNode::ControllerNode() {
 
 void* ControllerNode::getMessageFromSocket(void* pData) {
 	while(true){
-		sleep(0.2);
-
+		sleep(0.3);
 		pthread_mutex_lock(&mutex);
-
 		string msj=_Server->getFirstMessage();
-		if(msj != "-1"){
-			_Client->receiveMessage(msj);
-		}
 		pthread_mutex_unlock(&mutex);
+
+		if(msj != "-1"){
+			string str = msj;
+			char delimiter = ' ';
+			//vector<string> internal;
+			LinkedList<string>* internal = new LinkedList<string>();
+			stringstream ss(str); // Turn the string into a stream.
+			string tok;
+			while(getline(ss, tok, delimiter)) {
+				//internal.push_back(tok);
+				internal->insertTail(tok);
+			}
+			msj="";
+			Node<string>* tmp = internal->getHead();
+			for(int i=0; i<internal->getLength();i++){
+				msj=msj+tmp->getData()+"_";
+				tmp = tmp->getNext();
+			}
+			cout<<"mensaje :"<<msj<<endl;
+			_Client->receiveMessage(msj+"_");
+		}
 
 	}
 	pthread_exit(NULL);
