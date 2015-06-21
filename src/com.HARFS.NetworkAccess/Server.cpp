@@ -94,8 +94,8 @@ void* Server::receiveNewClient(void* pNewsockfd){
 		password =getWordIn(buffer);
 		bzero(buffer,256);
 		write(newsockfd,"Vuelva a conectarse con sus nueva credencial \n",47);
-		cout<<"user: "<<username<<"."<<endl;
-		cout<<"password: "<<password<<"."<<endl;
+//		cout<<"user: "<<username<<"."<<endl;
+//		cout<<"password: "<<password<<"."<<endl;
 		pthread_mutex_lock(&mutex);
 		user* newUser = new user(username,password);
 		_UserList->insertTail(newUser);
@@ -162,11 +162,11 @@ void* Server::receiveNewClient(void* pNewsockfd){
 			write(newsockfd,"9. CLOSE  \n",12);
 		}
 		else if(str.length() > 2 ){
-			//if(true){
-			if(formatoCorrecto(buffer)){
+			if(true){
+			//if(formatoCorrecto(buffer)){
 				write(newsockfd,"Mensaje enviado correctamente \n",32);
 				pthread_mutex_lock(&mutex);
-				cout<<"nuevo mensaje para Disk Node: \n";
+				//cout<<"nuevo mensaje para Disk Node: \n";
 				_MensajesRecibidosDelUsuario->insertTail(username+"#"+str);
 				pthread_mutex_unlock(&mutex);
 			}else{

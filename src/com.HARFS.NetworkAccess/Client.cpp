@@ -46,25 +46,20 @@ void* Client::threadSendToPort(void* pData){
 	if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
 		error("ERROR connecting");
 	while(true){
-		sleep(0.3);
 		bzero(buffer,256);
 		bzero(bufferRecibir,256);
-		while(_MensajesParaDiskNode->getLength()>0){
-			pthread_mutex_unlock(&mutex);
-			const char *cstr = _MensajesParaDiskNode->getHead()->getData().c_str();
-			n = write(sockfd, cstr ,strlen(cstr));
-			if (n < 0)
-				 error("ERROR writing to socket");
+		pthread_mutex_lock(&mutex);
+		while(_MensajesParaDiskNode->getLength()!=0){
+			char *cstr = _MensajesParaDiskNode->getHead()->getData().c_str();
+			write(sockfd, cstr ,strlen(cstr));
 			cout<<"El mensaje enviado fue: "<<_MensajesParaDiskNode->getHead()->getData()<<"\n";
 			_MensajesParaDiskNode->deleteData(_MensajesParaDiskNode->getHead()->getData());
-			pthread_mutex_unlock(&mutex);
-			read(sockfd,bufferRecibir,sizeof(bufferRecibir)-1);
-			_MessagesListReceived->insertTail((string)bufferRecibir);
-			bzero(bufferRecibir,256);
+			//read(sockfd,bufferRecibir,sizeof(bufferRecibir)-1);
+			//_MessagesListReceived->insertTail((string)bufferRecibir);
+			//bzero(bufferRecibir,256);
 		}
+		pthread_mutex_unlock(&mutex);
 		bzero(buffer,256);
-		if (n < 0)
-			 error("ERROR reading from socket");
 	}
 	close(sockfd);
 	pthread_exit(NULL);
@@ -77,7 +72,7 @@ void Client::error(const char *msg)
 }
 
 string Client::getMessageReceived(){
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_lock(&mutex);
 	string ans = _MessagesListReceived->getHead()->getData();
 	_MessagesListReceived->deleteData(ans);
 	pthread_mutex_unlock(&mutex);
@@ -85,7 +80,7 @@ string Client::getMessageReceived(){
 }
 
 void Client::receiveMessage(string pMsj){
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_lock(&mutex);
 	_MensajesParaDiskNode->insertTail(pMsj);
 	pthread_mutex_unlock(&mutex);
 }
