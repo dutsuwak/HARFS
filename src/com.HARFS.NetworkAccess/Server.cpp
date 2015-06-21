@@ -162,8 +162,8 @@ void* Server::receiveNewClient(void* pNewsockfd){
 			write(newsockfd,"9. CLOSE  \n",12);
 		}
 		else if(str.length() > 2 ){
-			if(true){
-			//if(formatoCorrecto(buffer)){
+			//if(true){
+			if(formatoCorrecto(buffer)){
 				write(newsockfd,"Mensaje enviado correctamente \n",32);
 				pthread_mutex_lock(&mutex);
 				cout<<"nuevo mensaje para Disk Node: \n";

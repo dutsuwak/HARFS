@@ -5,4 +5,5 @@
 	<PATH value = "vacio" />
 	<JSONS_PATH value = "vacio"/>
 	<DISK_SIZE value = "100" />
+	<FILES_PATH value = "src/data/" />
 </root>

@@ -32,9 +32,10 @@ ControllerNode::ControllerNode() {
 	char* pIP = ans[0].c_str();
 	_Client = new Client(pIP,pPort);
 	if(ControllerConstants::DEBUG=="true")
-			cout<<"controllerNode() envia a: "<<pIP<<":"<<pPort<<endl;
+		cout<<"controllerNode() envia a: "<<pIP<<":"<<pPort<<endl;
 	pthread_t hiloCliente;
 	pthread_create(&hiloCliente,0,ControllerNode::getMessageFromSocket,(void*)this);
+			cout<<"Envia a: "<<pIP<<":"<<pPort<<endl;
 }
 
 void* ControllerNode::getMessageFromSocket(void* pData) {
