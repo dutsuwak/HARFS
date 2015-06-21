@@ -343,24 +343,56 @@ template<class k>
 void DiskLinkedList<k>::deleteData(k pData){
 	if(findData(pData) == false){ return; }
 	else{
-		DiskNode<k>* tmp = checkNodeData(pData);
+		DiskNode<k>* tmp = getHead();					 //Iterador comienza en el head
+		DiskNode<k>* nodeToDelete = checkNodeData(pData);//Nodo del dato a borrar
 
 		std::string dataName = listName + ".mtd";
 
-		FILE* data;
-		data = fopen ( dataName.c_str() , "r+" );
+		FILE* metaDataFile;
+		metaDataFile = fopen ( dataName.c_str() , "r+" );
 
-		std::string output;
-		fseek (data , 0 , SEEK_SET );
+		if(tmp->getData() == nodeToDelete->getData()){ //CASO 1: Borrar el head
+			if(length == 1){
+				fseek (metaDataFile , 0 , SEEK_SET );
+				fputs ( "#99999#99999#99999#99999#99999#99999#99999#99999#99999\n" , metaDataFile );
+			}
+			else{
+				DiskNode<k>* pNext = tmp->getNext();
+				fseek (metaDataFile , 1 , SEEK_SET );
+				fputs((pNext->getPtrData()).c_str(),metaDataFile);
 
-		int c = fgetc(data);
-		while(c != 10){
-			output.operator +=((char)c);
-			c = fgetc (data);
+				fseek(metaDataFile,7,SEEK_SET);
+				fputs((pNext->getptrNext()).c_str(),metaDataFile);
+
+				fseek(metaDataFile,19,SEEK_SET);
+				fputs((pNext->getsizeData()).c_str(),metaDataFile);
+
+				fseek(metaDataFile,25,SEEK_SET);
+				fputs((pNext->getsizeNext()).c_str(),metaDataFile);
+
+				fseek(metaDataFile,43,SEEK_SET);
+				fputs((pNext->getmetaNext()).c_str(),metaDataFile);
+
+				fseek(metaDataFile,62,SEEK_SET);
+				string pNext_Tail = getOffsetformat(pNext->getData());
+				fputs((pNext_Tail).c_str(),metaDataFile);
+
+				string sOffset = pNext->getmetaNext();
+				int offsetMetaNext = atoi(sOffset.c_str());
+				int finalOffset = (offsetMetaNext*55)+49;
+
+				fseek(metaDataFile,finalOffset,SEEK_SET);
+				string offsetPreviousNextNode = getOffsetformat(0);
+				fputs((offsetPreviousNextNode).c_str(),metaDataFile);
+
+
+			}
+			cout<<"LENGHT ANTES: "<<length<<endl;
+			length--;
+			cout<<"LENGHT DESPUES: "<<length<<endl;
+
 		}
-		fclose (data);
-
-
+		fclose (metaDataFile);
 
 	}
 }
@@ -368,6 +400,7 @@ void DiskLinkedList<k>::deleteData(k pData){
 template<class k>
 void DiskLinkedList<k>::showData(){
 	DiskNode<k>* n = getHead();
+	cout<<"LENGHT SHOWDATA: "<<length<<endl;
 	for(int i = 0; i < length; i++){
 		cout<< n->getData() <<endl;
 		n = n->getNext();

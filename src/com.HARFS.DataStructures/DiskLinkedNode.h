@@ -40,11 +40,23 @@ private:
 
 	int binaryToIntegerint(string numArray,int ind,int resultado,int maxType);
 	int arrayToInt(int pArray[],int ind,int resultado, int length, int potencia);
+	string getOffsetformat(int pOffset);
 
 public:
 	DiskNode();
 	void setData(string pData);
 	void setListName(string pData, int pLength);
+	string retrieveData();
+
+	string getPtrData();
+	string getptrNext();
+	string getptrPrevious();
+	string getsizeData();
+	string getsizeNext();
+	string getsizePrevious();
+	string getmetaData();
+	string getmetaNext();
+	string getmetaPrevious();
 
 	k getData();
 	DiskNode<k>* getNext();
@@ -115,11 +127,12 @@ DiskNode<k>* DiskNode<k>::getNext(){
 	data = fopen ( dataName.c_str() , "r" );
 
 	std::string output;
-	if(_metaNext == 0){ fseek (data , 0 , SEEK_SET ); }
+	/*if(_metaNext == 0){ fseek (data , 0 , SEEK_SET ); }
 	else if(_metaNext == 1){ fseek(data,55,SEEK_SET); }
 	else if(_metaNext == _length){ fseek(data,55,SEEK_SET);}
-	else{fseek(data,55*_metaNext,SEEK_SET); }
+	else{fseek(data,55*_metaNext,SEEK_SET); }*/
 
+	fseek(data,55*_metaNext,SEEK_SET);
 	int c = fgetc(data);
 	while(c != 10){
 		output.operator +=((char)c);
@@ -224,7 +237,29 @@ int DiskNode<k>::binaryToIntegerint(string numArray,int ind,int resultado,int ma
 		  binaryToIntegerint(numArray,ind+=1,resultado,maxType);
 
 	  }
+}
+
+template<class k>
+string DiskNode<k>::retrieveData(){
+	string output = "#" + getOffsetformat(_ptrData) + "#" + getOffsetformat(_ptrNext) +"#"
+					    + getOffsetformat(_ptrPrevious) + "#" + getOffsetformat(_sizeData) +"#"
+						+ getOffsetformat(_sizeNext) + "#" + getOffsetformat(_sizePrevious) +"#"
+						+ getOffsetformat(_metaData) + "#" + getOffsetformat(_metaNext) +"#"
+						+ getOffsetformat(_metaPrevious);
+	return output;
+}
+
+template<class k>
+std::string DiskNode<k>::getOffsetformat(int pOffset){
+	std::string pStringDatos = boost::lexical_cast<std::string>(pOffset);
+	int datosLength = pStringDatos.length();
+
+	for(int i = 0; i< 5-datosLength;i++){
+		pStringDatos = "0"+pStringDatos;
 	}
+
+	return pStringDatos;
+}
 
 template<class k>
 void DiskNode<k>::setListName(string pData, int pLength){_listName = pData; _length = pLength;}
@@ -257,5 +292,33 @@ template<class k>
 void DiskNode<k>::setmetaPrevious(string pData){_metaPrevious = atoi(pData.c_str());}
 
 
+
+
+template<class k>
+string DiskNode<k>::getPtrData(){return getOffsetformat(_ptrData);}
+
+template<class k>
+string DiskNode<k>::getptrNext(){return getOffsetformat(_ptrNext);}
+
+template<class k>
+string DiskNode<k>::getptrPrevious(){return getOffsetformat(_ptrPrevious);}
+
+template<class k>
+string DiskNode<k>::getsizeData(){return getOffsetformat(_sizeData);}
+
+template<class k>
+string DiskNode<k>::getsizeNext(){return getOffsetformat(_sizeNext);}
+
+template<class k>
+string DiskNode<k>::getsizePrevious(){return getOffsetformat(_sizePrevious);}
+
+template<class k>
+string DiskNode<k>::getmetaData(){return getOffsetformat(_metaData);}
+
+template<class k>
+string DiskNode<k>::getmetaNext(){return getOffsetformat(_metaNext);}
+
+template<class k>
+string DiskNode<k>::getmetaPrevious(){return getOffsetformat(_metaPrevious);}
 
 #endif /* SRC_COM_HARFS_DATASTRUCTURES_DISKLINKEDNODE_H_ */
