@@ -37,7 +37,7 @@ public:
 	static void* receiveNewClient(void* newsockfd);
 	static void error(const char *msg);
 	string getFirstMessage();
-	static bool formatoCorrecto(string pComando);
+	static bool formatoCorrecto(char pBuffer[]);
 	static string getWordIn(char pData[]);
 	static LinkedList<string>* getListOfWordsIn(char pData[]);
 };

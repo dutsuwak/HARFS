@@ -30,7 +30,7 @@ ControllerNode::ControllerNode() {
 	}
 	int pPort = atoi(ans[1].c_str());
 	char* pIP = ans[0].c_str();
-	//_Client = new Client(pIP,pPort);
+	_Client = new Client(pIP,pPort);
 	if(ControllerConstants::DEBUG=="true")
 			cout<<"controllerNode() envia a: "<<pIP<<":"<<pPort<<endl;
 	pthread_t hiloCliente;
@@ -40,7 +40,6 @@ ControllerNode::ControllerNode() {
 void* ControllerNode::getMessageFromSocket(void* pData) {
 	while(true){
 		//los mensajes direccion  usuario >>>>>> disk node
-		sleep(0.3);
 		pthread_mutex_lock(&mutex);
 		string msj=_Server->getFirstMessage();
 		pthread_mutex_unlock(&mutex);
@@ -61,7 +60,7 @@ void* ControllerNode::getMessageFromSocket(void* pData) {
 				tmp = tmp->getNext();
 			}
 			cout<<"enviar msj al disk Node: "<<msj<<endl;
-			//_Client->receiveMessage(msj);
+			_Client->receiveMessage(msj);
 		}
 
 		//los mensajes con direccion: disk node >>>>>> usuario

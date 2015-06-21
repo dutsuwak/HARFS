@@ -119,11 +119,9 @@ void* Server::receiveNewClient(void* pNewsockfd){
 		password = getWordIn(buffer);;
 		bzero(buffer,256);
 
-		cout<<"user: "<<username<<"."<<endl;
-		cout<<"password: "<<password<<"."<<endl;
 		Node<user*>* tmp = _UserList->getHead();
 		for(int i=0; i<_UserList->getLength();i++){
-			if(!(tmp->getData()->SoyEste(username,password))){
+			if((tmp->getData()->SoyEste(username,password))){
 				break;
 			}
 			if(tmp->getNext()==0){
@@ -134,7 +132,7 @@ void* Server::receiveNewClient(void* pNewsockfd){
 			tmp = tmp->getNext();
 		}
 		if(ControllerConstants::DEBUG =="true")
-			cout<<"Login con exito de: VACIO!"<<endl;
+			cout<<"Login con exito de: "<<username<<endl;
 		write(newsockfd,"Credenciales correctas \n",25);
 		write(newsockfd,"--HELP para visualizar los comandos \n",38);
 		//cout<<"usuario: "<<userName<<endl;
@@ -164,10 +162,12 @@ void* Server::receiveNewClient(void* pNewsockfd){
 			write(newsockfd,"9. CLOSE  \n",12);
 		}
 		else if(str.length() > 2 ){
-			if(formatoCorrecto(str)){
+			if(true){
+			//if(formatoCorrecto(buffer)){
 				write(newsockfd,"Mensaje enviado correctamente \n",32);
 				pthread_mutex_lock(&mutex);
-				_MensajesRecibidosDelUsuario->insertTail(str);
+				cout<<"nuevo mensaje para Disk Node: \n";
+				_MensajesRecibidosDelUsuario->insertTail(username+"#"+str);
 				pthread_mutex_unlock(&mutex);
 			}else{
 				write(newsockfd,"Comando desconocido \n",21);
@@ -180,10 +180,16 @@ void* Server::receiveNewClient(void* pNewsockfd){
 	pthread_exit(NULL);
 }
 
-bool Server::formatoCorrecto(string pCommand){
+bool Server::formatoCorrecto(char pBuffer[]){
 	bool ans = false;
 
-	string str = pCommand;
+	LinkedList<string>* internal = getListOfWordsIn(pBuffer);
+	Node<string>* tmp1 = internal->getHead();
+	cout<<"largo:: "<<internal->getLength()<<endl;
+	for(int i=0;i<internal->getLength();i++){
+		cout<<"palabra del comando: "<<tmp1->getData()<<endl;
+	}
+/*	string str = pCommand;
 	char delimiter = ' ';
 	LinkedList<string>* internal = new LinkedList<string>();
 	stringstream ss(str); // Turn the string into a stream.
@@ -191,12 +197,13 @@ bool Server::formatoCorrecto(string pCommand){
 	while(getline(ss, tok, delimiter)) {
 		//internal.push_back(tok);
 		internal->insertTail(tok);
-	}
+	}**/
+
 	Node<string>* tmp = internal->getHead();
 
-	if(tmp->getData().compare("csb")==0){			//Creat storage block
+	if(tmp->getData().compare("csb")==0 && internal->getLength() == 4){			//Creat storage block
 		tmp = tmp->getNext()->getNext();
-		if(internal->getLength() == 4 && tmp->getData().compare("LinkedList")==0 && ( tmp->getNext()->getData().compare("NoRaid") || tmp->getNext()->getData().compare("Raid")))
+		if(tmp->getData().compare("LinkedList")==0 && ( tmp->getNext()->getData().compare("NoRaid") || tmp->getNext()->getData().compare("Raid")))
 			ans = true;
 	}
 	else if(tmp->getData().compare("lsb")==0 && internal->getLength()==1){		//Listar Storage Block
@@ -257,7 +264,18 @@ string Server::getWordIn(char pData[]){
 
 LinkedList<string>* Server::getListOfWordsIn(char pData[]){
 	LinkedList<string>* lista = new LinkedList<string>();
-
+	std::string str="";
+	int asciiValue;
+	for(int i =0; i<=sizeof(pData);i++){
+		asciiValue = pData[i];
+		if (pData[i] != ' ' && pData[i] != '\t' && pData[i] != '\r' && pData[i] != '\n' && pData[i] != '\x0b' && asciiValue !=13 && asciiValue != 10){
+			str= str+pData[i];
+		}else{
+			lista->insertTail(str);
+			str="";
+		}
+	}
+	return lista;
 }
 
 
